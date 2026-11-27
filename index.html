@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0f1216">
-<title>Mes séances v3 – kite, pumping, pilates, yoga</title>
+<title>Mes séances v4 – kite, pumping, pilates, yoga</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -138,6 +138,21 @@ textarea{width:100%;min-height:120px;background:var(--card2);border:1px solid va
 .zbar{display:flex;height:16px;border-radius:8px;overflow:hidden;margin:6px 0;background:var(--line)}
 .zbar i{display:block;height:100%}
 .spark{width:100%;height:90px;display:block;margin-top:6px}
+/* histogramme des niveaux */
+.hist{display:flex;align-items:flex-end;gap:14px;height:150px;padding:8px 4px 0;border-bottom:1px solid var(--line)}
+.hcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;background:none;border:none;padding:0;color:var(--ink)}
+.hcol b{font:800 22px "Barlow Condensed",sans-serif;margin-bottom:4px}
+.hcol i{display:block;width:100%;max-width:90px;border-radius:8px 8px 0 0;min-height:3px}
+.hcol[aria-pressed=true] i{outline:3px solid var(--ink);outline-offset:2px}
+.hlab{display:flex;gap:14px;padding:6px 4px 0}
+.hlab span{flex:1;text-align:center;font-size:13px;color:var(--mut)}
+.hfam{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) 2.4em;align-items:center;gap:8px;margin:5px 0;font-size:14px}
+.hfam span{color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hfam .sb{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--line)}
+.hfam .sb i{display:block;height:100%}
+.hfam em{font-style:normal;text-align:right;font:800 16px "Barlow Condensed",sans-serif}
+.hleg{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:8px}
+.hleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
 /* nav */
 nav{position:fixed;left:0;right:0;bottom:0;z-index:4;background:#0b0d10;border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;max-width:130px;min-height:64px;border:none;background:none;color:var(--mut);font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
@@ -1501,7 +1516,7 @@ $('hp-close').onclick=()=>$('help').classList.remove('on');
 $('hh-close').onclick=()=>$('hrhelp').classList.remove('on');
 
 /* ---------- Sauvegarde texte ---------- */
-const dataTxt=()=>JSON.stringify({app:'mes-seances',v:3,date:new Date().toISOString(),sessions:store.sessions,runs:store.runs,log:store.log,week:store.week,cfg:store.cfg,people:store.people});
+const dataTxt=()=>JSON.stringify({app:'mes-seances',v:4,date:new Date().toISOString(),sessions:store.sessions,runs:store.runs,log:store.log,week:store.week,cfg:store.cfg,people:store.people});
 function exportData(){
   const d=new Date(),n='mes-seances-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json';
   download(new Blob([dataTxt()],{type:'application/json'}),n);store.lastExport=Date.now();persist();toast('Sauvegarde téléchargée : '+n);if(curTab==='list')renderList();
@@ -1624,10 +1639,25 @@ function applyF(f){
 function exCard(X,pick){return `<div class="ex" data-k="${X.k}" data-cat="${X.cat}"><button class="exv" data-a="look" aria-label="Voir ${esc(X.n)} en grand"><span class="no">${X.no}</span><span class="eye">voir</span><svg aria-hidden="true"></svg>
   <div class="nm">${X.n}</div>${tagsOf(X)}<div class="cu">${X.cue}</div></button>
   ${pick?'<button class="exadd" data-a="addex">+ Ajouter</button>':''}</div>`}
+/* Histogramme des niveaux : calculé sur les filtres actifs, sauf le niveau */
+const LVC=['','#8fd694','#ffc46b','#ff8a8a'];
+function histHtml(base){
+  const cnt=[0,0,0,0];base.forEach(X=>cnt[X.lv]++);const mx=Math.max(1,...cnt);
+  const fams=Object.keys(CATS).map(c=>{const l=base.filter(X=>X.cat===c),k=[0,0,0,0];l.forEach(X=>k[X.lv]++);return [c,l.length,k]}).filter(x=>x[1]);
+  const fmx=Math.max(1,...fams.map(x=>x[1]));
+  return `<div class="card"><div class="t"><b>Niveaux des exercices</b><span>${base.length}</span></div>
+  <div class="hist">${[1,2,3].map(l=>`<button class="hcol" data-hl="${l}" aria-pressed="${libF.lv===String(l)}" aria-label="${LVN[l]} : ${cnt[l]} exercices, toucher pour filtrer"><b>${cnt[l]}</b><i style="height:calc((100% - 32px) * ${cnt[l]/mx});background:${LVC[l]}"></i></button>`).join('')}</div>
+  <div class="hlab">${[1,2,3].map(l=>`<span>${LVN[l]} · ${base.length?Math.round(cnt[l]/base.length*100):0} %</span>`).join('')}</div>
+  <div class="lbl">Par famille</div>
+  ${fams.map(([c,n,k])=>`<div class="hfam"><span>${CATS[c]}</span><div><div class="sb" style="width:${n/fmx*100}%">${[1,2,3].map(l=>k[l]?`<i style="width:${k[l]/n*100}%;background:${LVC[l]}" title="${LVN[l]} : ${k[l]}"></i>`:'').join('')}</div></div><em>${n}</em></div>`).join('')}
+  <div class="hleg">${[1,2,3].map(l=>`<span><i style="background:${LVC[l]}"></i>${LVN[l]}</span>`).join('')}</div>
+  <p class="note">Touche une barre pour n’afficher que ce niveau, retouche-la pour tout revoir.</p></div>`;
+}
 let libF=F0();
 function renderLib(){
-  const list=applyF(libF);
+  const base=applyF({...libF,lv:'all'}),list=libF.lv==='all'?base:base.filter(X=>String(X.lv)===libF.lv);
   $('v-lib').innerHTML=`<div class="wrap"><h1>Exercices</h1><p class="lead">${LIB.length} exercices, chacun avec sa description. Trie par famille, niveau, zone, type, matériel ou contrainte. Pour corriger une animation, donne son numéro.</p>
+  ${histHtml(base)}
   <div class="fgrid" id="lib-f">${filterUI(libF)}</div><div class="acts"><button class="b sm" data-a="reset">Effacer les filtres</button></div>
   <p class="note">${list.length} affichés, rangés par famille puis par niveau. En rouge : contrainte d’un participant.</p>
   ${Object.keys(CATS).map(c=>{const l=list.filter(x=>x.cat===c);return l.length?`<h2>${CATS[c]} <small style="color:var(--mut);font-size:15px">${l.length}</small></h2><div class="grid">${l.map(x=>exCard(x)).join('')}</div>`:''}).join('')}</div>`;
@@ -1636,6 +1666,7 @@ function renderLib(){
 $('v-lib').addEventListener('change',e=>{const s=e.target.closest('[data-f]');if(!s)return;libF[s.dataset.f]=s.value;renderLib()});
 $('v-lib').addEventListener('click',e=>{
   if(e.target.closest('[data-a=reset]')){libF=F0();renderLib();return}
+  const h=e.target.closest('[data-hl]');if(h){const y=window.scrollY;libF.lv=libF.lv===h.dataset.hl?'all':h.dataset.hl;renderLib();window.scrollTo(0,y);return}
   const c=e.target.closest('.ex');if(c)openLook(c.dataset.k,null)});
 let pickB=null,pickF=F0();
 function openPick(b){pickB=b;$('pick-t').textContent='Ajouter : '+BL[b];pickF=F0();if(b==='stretch')pickF.cat='etirement';pickF.mat='mine';renderPick();$('pick').classList.add('on');$('pick').scrollTop=0}
@@ -1773,5 +1804,290 @@ tab('list');
 requestAnimationFrame(loop);
 }
 </script>
+
+<!-- ===================================================================
+     MES SÉANCES v4 : annonces vocales, commande vocale, boutons musique
+     de la Garmin, télécommande Bluetooth, vidéo YouTube et mode TV.
+     =================================================================== -->
+<style>
+.pside{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
+.pside>.ptop:last-child{flex-wrap:wrap}
+.ytw{display:none;background:#000;border-radius:14px;overflow:hidden}
+.ytw iframe{width:100%;height:100%;border:0;display:block}
+#player.split .ytw{display:block;aspect-ratio:16/9;width:100%;flex:none}
+#player.split .pfig{aspect-ratio:auto;height:24vh}
+#player.split .ptime{font-size:clamp(56px,16vw,90px)}
+.xin{display:block;width:100%;min-height:48px;margin-top:6px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:0 12px;color:var(--ink);font-size:15px}
+.xok{color:#8fd694}.xko{color:#ff9b9b}
+#x-mic2[data-live="1"]{background:#1f3a2a;color:#8fd694;border-color:#2f5a3f}
+#x-tv{z-index:14}
+@media (orientation:landscape) and (min-width:760px){
+  #player:not(.split) #p-run{max-width:1150px;min-height:100vh}
+  #player:not(.split) .pside{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:28px;row-gap:8px;align-content:center;
+    grid-template-areas:"top top" "prog prog" "fig hr" "fig name" "fig var" "fig cue" "fig time" "fig bar" "fig next" "fig ctl" "bot bot"}
+  .pside>.ptop:first-child{grid-area:top}.pside>.prog{grid-area:prog}.pside>#p-hr{grid-area:hr}.pside>.pfig{grid-area:fig}
+  .pside>#p-name{grid-area:name}.pside>#p-var{grid-area:var}.pside>#p-cue{grid-area:cue}.pside>#p-time{grid-area:time}
+  .pside>.bar{grid-area:bar}.pside>#p-next{grid-area:next}.pside>.ctl{grid-area:ctl}.pside>.ptop:last-child{grid-area:bot}
+  #player:not(.split) .pfig{aspect-ratio:auto;height:100%;min-height:0;max-height:72vh}
+  #player:not(.split) .ptime{font-size:min(20vh,140px)}
+  #player.split #p-run{max-width:none;flex-direction:row;align-items:stretch;height:100vh;padding:12px}
+  #player.split .ytw{aspect-ratio:auto;flex:1.7;height:auto}
+  #player.split .pside{flex:1;max-width:460px;overflow:auto}
+  #player.split .pfig{height:22vh}
+  #player.split .ptime{font-size:15vh}
+}
+</style>
+
+<div class="ov" id="x-tv">
+  <div class="ovh"><b>Sur la TV et avec la montre</b><button class="b" data-x="tvclose">Fermer</button></div>
+  <div class="wrap">
+    <p class="lead">La tablette fait tourner la séance (et capte ta FC), la TV affiche une copie de l’écran. Garde la page sur la tablette, pas dans le navigateur de la TV : il ne gère ni le Bluetooth ni le micro.</p>
+    <h2>Envoyer l’écran sur la TV</h2>
+    <ol class="steps">
+      <li><b>Chromecast, Google TV, Android TV</b> : dans Chrome sur la tablette, menu ⋮ › <b>Caster…</b> › choisis la TV. Ou tire le volet des réglages rapides › <b>Caster l’écran</b> (ou <b>Smart View</b> sur Samsung).</li>
+      <li><b>TV Samsung, LG… sans Chromecast</b> : Smart View, « Screen Share » ou « Miracast » selon la marque, depuis les réglages rapides.</li>
+      <li><b>Avec un câble</b> : adaptateur USB-C vers HDMI, si ta tablette le permet.</li>
+    </ol>
+    <h2>Pour que ce soit beau</h2>
+    <ol class="steps">
+      <li>Tourne la tablette <b>à l’horizontale</b> et touche <b>⛶ Plein écran</b> : figure à gauche, chrono à droite.</li>
+      <li>Avec une vidéo YouTube : la vidéo prend la grande partie gauche, la séance la colonne de droite.</li>
+      <li>Le son (vidéo, bips, annonces) sort en général par la TV.</li>
+    </ol>
+    <div class="warn">Commande vocale : le son de la TV peut gêner le micro de la tablette. Baisse un peu le volume ou rapproche-toi de la tablette. Sur Android, un petit bip peut sonner quand l’écoute redémarre.</div>
+    <h2>Boutons de la Garmin</h2>
+    <ol class="steps">
+      <li>La tablette doit être connectée à la montre via <b>Garmin Connect</b>.</li>
+      <li>Coche <b>⌚ Boutons musique de la montre</b> avant de démarrer.</li>
+      <li>Sur la montre, ouvre les <b>commandes de musique</b> (souvent appui long sur DOWN depuis le cadran, ou menu des commandes) et choisis la source <b>Téléphone</b> si elle te le demande.</li>
+      <li>▶︎❚❚ = pause / reprise · ⏭ = exercice suivant · ⏮ = précédent. Le titre du « morceau » sur la montre = l’exercice en cours.</li>
+    </ol>
+    <div class="warn">Si une vidéo YouTube joue en même temps, les boutons de la montre peuvent piloter YouTube au lieu de la séance. Dans ce cas, utilise la voix ou une télécommande.</div>
+    <h2>Télécommande ou clavier Bluetooth</h2>
+    <p class="lead"><b>Espace</b> = pause / reprise · <b>→</b> ou Page suivante = suivant · <b>←</b> ou Page précédente = précédent. Une télécommande de présentation marche bien. Les petites télécommandes « selfie » (volume +) ne marchent pas toujours dans Chrome.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+if(!$('player')||!$('p-run')||!$('p-go'))return;
+
+/* ---------- réglages v4 ---------- */
+const KEY='mes-seances-v4';
+let C={say:true,mic:false,media:true,yt:'',ytOn:false,ytSync:true};
+try{Object.assign(C,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(C))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tt=null;const toast=m=>{const t=$('toast');if(!t)return;t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2800)};
+
+/* ---------- état du lecteur v3 (lu dans la page) ---------- */
+const runVis=()=>$('player').classList.contains('on')&&!$('p-run').classList.contains('hid');
+const isRunning=()=>/M6 5h4/.test($('p-icon').innerHTML);
+const secOf=t=>{const m=/(\d+):(\d+)/.exec(t||'');return m?(+m[1])*60+(+m[2]):0};
+let stepInit=0;
+const elapsed=()=>stepInit-secOf($('p-time').textContent);
+const press=id=>{const b=$(id);if(b)b.click()};
+const CTRL={
+  toggle:()=>press('p-play'),
+  play:()=>{if(!isRunning())press('p-play')},
+  pause:()=>{if(isRunning())press('p-play')},
+  next:()=>press('p-skip'),
+  prev:()=>{const e=elapsed();press('p-prev');if(e>3)press('p-prev')},
+  restart:()=>{if(elapsed()>3)press('p-prev')}
+};
+
+/* ---------- mise en page : vidéo + séance ---------- */
+const run=$('p-run'),side=document.createElement('div');side.className='pside';
+while(run.firstChild)side.appendChild(run.firstChild);
+const ytw=document.createElement('div');ytw.className='ytw';run.appendChild(ytw);run.appendChild(side);
+const bot=side.querySelector('.ptop:last-child');
+if(bot)bot.insertAdjacentHTML('beforeend','<button class="chip" data-x="say" id="x-say2"></button><button class="chip" data-x="mic" id="x-mic2"></button><button class="chip" data-x="fs">⛶ Plein écran</button>');
+
+$('p-go').insertAdjacentHTML('beforebegin',`<div class="card" id="x-card" style="margin-top:10px">
+  <div class="t"><b>Commandes, vidéo et TV</b></div>
+  <div class="chips">
+    <button class="chip" data-x="say">🔊 Annonces vocales</button>
+    <button class="chip" data-x="mic">🎤 Commande vocale</button>
+    <button class="chip" data-x="media">⌚ Boutons musique de la montre</button>
+  </div>
+  <p class="note" style="margin-top:0">Commande vocale : dis « pause », « reprends », « suivant », « précédent », « recommence » ou « temps ».</p>
+  <div class="lbl">Vidéo YouTube à côté de la séance</div>
+  <input id="x-yt" class="xin" inputmode="url" autocomplete="off" placeholder="Colle un lien YouTube (vidéo ou playlist)">
+  <p class="note" id="x-ytmsg"></p>
+  <div class="chips"><button class="chip" data-x="ytOn">Afficher la vidéo</button><button class="chip" data-x="ytSync">La vidéo suit les pauses</button></div>
+  <div class="acts"><button class="b sm" data-x="tvhelp">📺 TV et montre : comment ?</button><button class="b sm" data-x="fs">⛶ Plein écran</button></div>
+</div>`);
+const ytIn=$('x-yt');ytIn.value=C.yt||'';
+
+/* ---------- voix (annonces) ---------- */
+const TTS='speechSynthesis' in window;
+let frVoice=null,quietUntil=0;
+const pickVoice=()=>{try{const v=speechSynthesis.getVoices();frVoice=v.find(x=>/^fr[-_]FR/i.test(x.lang))||v.find(x=>/^fr/i.test(x.lang))||null}catch(e){}};
+if(TTS){pickVoice();try{speechSynthesis.addEventListener('voiceschanged',pickVoice)}catch(e){}}
+function say(t){
+  if(!C.say||!TTS||!t)return;
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';if(frVoice)u.voice=frVoice;u.rate=1.05;
+    quietUntil=Date.now()+9000;duck(true);
+    u.onend=u.onerror=()=>{quietUntil=Date.now()+700;duck(false)};speechSynthesis.speak(u)}catch(e){}
+}
+const dur=s=>s>=60?Math.floor(s/60)+' minute'+(s>=120?'s':'')+(s%60?' '+(s%60):''):s+' secondes';
+const spoken=n=>String(n).replace(/\s+–\s+droite$/,', côté droit').replace(/\s+–\s+gauche$/,', côté gauche');
+const nextName=()=>{const b=$('p-next').querySelector('b');return b?(b.textContent||'').trim():''};
+
+/* Annonce du prochain exercice : pendant les pauses, et 8 s avant la fin de chaque exercice */
+let saidNext={n:'',t:0},stepName='';
+const recentlySaid=nx=>saidNext.n===nx&&Date.now()-saidNext.t<25000;
+function onStep(){
+  if(!runVis())return;
+  stepInit=secOf($('p-time').textContent);
+  const n=($('p-name').textContent||'').trim(),nx=nextName();stepName=n;
+  let t;
+  if(n==='Pause')t=nx&&!recentlySaid(nx)?'Prochain : '+spoken(nx):'';
+  else if(n==='Repos')t='Repos, '+dur(stepInit)+(nx?'. Prochain : '+spoken(nx):'');
+  else t=spoken(n)+', '+dur(stepInit);
+  if(nx&&/^(Pause|Repos)$/.test(n))saidNext={n:nx,t:Date.now()};
+  say(t);meta(n,nx);
+}
+setInterval(()=>{
+  if(!runVis()||!isRunning()||!C.say||stepName==='Pause'||stepInit<15)return;
+  const r=secOf($('p-time').textContent),nx=nextName();
+  if(r<=8&&r>=6&&nx&&!recentlySaid(nx)){saidNext={n:nx,t:Date.now()};say('Ensuite : '+spoken(nx))}
+},250);
+
+/* ---------- boutons musique de la montre (Media Session) ---------- */
+const MS='mediaSession' in navigator;
+let au=null;
+function silentWav(){const sr=8000,n=sr*10,b=new ArrayBuffer(44+n),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
+  for(let i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
+function handlers(on){if(!MS)return;const h=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,on?()=>{if(runVis())f()}:null)}catch(e){}};
+  h('play',CTRL.play);h('pause',CTRL.pause);h('nexttrack',CTRL.next);h('previoustrack',CTRL.prev);h('stop',CTRL.pause)}
+function mediaStart(){if(!C.media||!MS)return;if(!au){au=new Audio(silentWav());au.loop=true}au.play().catch(()=>{});handlers(true)}
+function mediaStop(){if(au)au.pause();handlers(false);try{navigator.mediaSession.playbackState='none';navigator.mediaSession.metadata=null}catch(e){}}
+function meta(n,nx){if(!au||!C.media||!MS||!('MediaMetadata' in window))return;
+  try{navigator.mediaSession.metadata=new MediaMetadata({title:n||'Séance',artist:nx?'Prochain : '+nx:'Dernier exercice',album:($('p-title').textContent||'Mes séances')})}catch(e){}}
+
+/* ---------- YouTube ---------- */
+let yf=null;
+function ytSrc(u){u=String(u||'').trim();if(!u)return null;
+  const id=(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([\w-]{11})/.exec(u)||[])[1]||(/^[\w-]{11}$/.test(u)?u:null);
+  const list=(/[?&]list=([\w-]+)/.exec(u)||[])[1];
+  const q='enablejsapi=1&playsinline=1&rel=0&autoplay=1'+(/^https?:/.test(location.origin)?'&origin='+encodeURIComponent(location.origin):'');
+  if(id)return 'https://www.youtube-nocookie.com/embed/'+id+'?'+q+(list?'&list='+list:'');
+  if(list)return 'https://www.youtube-nocookie.com/embed/videoseries?list='+list+'&'+q;
+  return null}
+function ytCmd(func,args){if(!yf||!yf.contentWindow)return;try{yf.contentWindow.postMessage(JSON.stringify({event:'command',func,args:args||[]}),'*')}catch(e){}}
+function duck(on){if(yf)ytCmd('setVolume',[on?25:100])}
+function ytStart(){ytStop();if(!C.ytOn)return;const src=ytSrc(C.yt);if(!src){toast('Lien YouTube non reconnu');return}
+  yf=document.createElement('iframe');yf.src=src;yf.title='Vidéo YouTube';yf.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';yf.setAttribute('allowfullscreen','');
+  yf.addEventListener('load',()=>setTimeout(()=>{if(!yf)return;ytCmd(isRunning()||!C.ytSync?'playVideo':'pauseVideo')},900));
+  ytw.appendChild(yf);$('player').classList.add('split')}
+function ytStop(){if(yf){yf.remove();yf=null}if($('player').classList.contains('split'))$('player').classList.remove('split')}
+
+/* ---------- commande vocale ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,recOn=false,recWant=false,gen=0;const done=new Set(),lastAt={};
+const norm=t=>String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const CMDS=[
+  ['next',/\b(suivant|suivante|next|passe|saute)\b/],
+  ['prev',/\b(precedent|precedente|retour|arriere)\b/],
+  ['restart',/\b(recommence|recommencer)\b/],
+  ['pause',/\b(pause|stop|attends|arrete|halte)\b/],
+  ['play',/\b(reprends|reprend|reprise|continue|continuer|go|demarre|repars|play)\b|vas[- ]?y|on y va/],
+  ['time',/\b(temps|combien)\b|\breste\b/]
+];
+const parse=t=>{t=norm(t);for(const [c,r] of CMDS)if(r.test(t))return c;return null};
+const LBL={next:'Suivant',prev:'Précédent',restart:'Recommence',pause:'Pause',play:'On reprend',time:'Temps'};
+function doCmd(c){
+  if(!runVis())return;const now=Date.now();if(now-(lastAt[c]||0)<1200)return;lastAt[c]=now;
+  toast('🎤 '+LBL[c]);
+  if(c==='time'){const r=secOf($('p-time').textContent),tot=secOf($('p-left').textContent);say('Encore '+dur(r)+'. Fin de séance dans '+dur(Math.round(tot/60)*60||tot));return}
+  if(c==='pause'){CTRL.pause();say('Pause');return}
+  if(c==='play'){if(!isRunning()){say('On reprend');setTimeout(CTRL.play,600)}return}
+  CTRL[c]();
+}
+function micStart(){
+  if(!SR){C.mic=false;save();paint();toast('Commande vocale indisponible dans ce navigateur : utilise Chrome');return}
+  recWant=true;if(recOn||rec)return;
+  const g=++gen;let r;
+  try{r=new SR()}catch(e){return}
+  rec=r;r.lang='fr-FR';r.continuous=true;r.interimResults=true;r.maxAlternatives=3;
+  r.onstart=()=>{if(g===gen){recOn=true;paint()}};
+  r.onend=()=>{if(g!==gen)return;recOn=false;rec=null;paint();if(recWant)setTimeout(()=>{if(recWant&&!rec)micStart()},350)};
+  r.onerror=e=>{if(g!==gen)return;const er=e&&e.error;
+    if(er==='not-allowed'||er==='service-not-allowed'){recWant=false;C.mic=false;save();toast('Micro refusé : autorise le micro pour ce site dans Chrome')}
+    else if(er==='audio-capture'){recWant=false;toast('Aucun micro trouvé')}
+    else if(er==='network')toast('Commande vocale : il faut une connexion internet');
+    paint()};
+  r.onresult=e=>{
+    for(let i=e.resultIndex;i<e.results.length;i++){const res=e.results[i];
+      for(let a=0;a<res.length;a++){const c=parse(res[a].transcript);if(!c)continue;const k=g+'|'+i+'|'+c;
+        if(!done.has(k)){done.add(k);if(Date.now()>quietUntil&&!(TTS&&speechSynthesis.speaking))doCmd(c)}break}}};
+  try{r.start()}catch(e){rec=null}
+}
+function micStop(){recWant=false;gen++;const r=rec;rec=null;recOn=false;try{r&&r.abort()}catch(e){}paint()}
+
+/* ---------- plein écran ---------- */
+function fullscreen(){const d=document,el=d.documentElement;
+  if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen||function(){}).call(d);return}
+  const p=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);
+  const lock=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};
+  if(p&&p.then)p.then(lock,()=>{});else lock()}
+
+/* ---------- boutons ---------- */
+function paint(){
+  document.querySelectorAll('[data-x]').forEach(b=>{const k=b.dataset.x;if(k in C&&typeof C[k]==='boolean')b.setAttribute('aria-pressed',C[k])});
+  const s2=$('x-say2');if(s2)s2.textContent='🔊 Annonces : '+(C.say?'oui':'non');
+  const m2=$('x-mic2');if(m2){m2.textContent=C.mic?(recOn?'🎤 J’écoute':'🎤 Micro : oui'):'🎤 Micro : non';m2.dataset.live=recOn?1:0}
+  const msg=$('x-ytmsg');if(msg){const v=ytIn.value.trim();msg.innerHTML=!v?'Exemple : https://youtu.be/… ou un lien de playlist. La vidéo s’affiche à côté de la séance.':ytSrc(v)?'<span class="xok">✓ Lien reconnu</span>':'<span class="xko">✗ Lien non reconnu : copie le lien depuis « Partager » dans YouTube</span>'}
+}
+ytIn.addEventListener('input',()=>{C.yt=ytIn.value.trim();if(ytSrc(C.yt))C.ytOn=true;save();paint()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(!b)return;const k=b.dataset.x;
+  if(k==='tvhelp'){$('x-tv').classList.add('on');$('x-tv').scrollTop=0;return}
+  if(k==='tvclose'){$('x-tv').classList.remove('on');return}
+  if(k==='fs'){fullscreen();return}
+  if(k==='say'){C.say=!C.say;if(!C.say&&TTS)try{speechSynthesis.cancel()}catch(x){}else say('Annonces activées')}
+  else if(k==='mic'){C.mic=!C.mic;if(C.mic)micStart();else micStop()}
+  else if(k==='media'){C.media=!C.media;if(!C.media)mediaStop();else if(runVis())mediaStart()}
+  else if(k==='ytOn'){if(!C.ytOn&&!ytSrc(C.yt)){toast('Colle d’abord un lien YouTube');ytIn.focus();return}C.ytOn=!C.ytOn;if(runVis())C.ytOn?ytStart():ytStop()}
+  else if(k==='ytSync')C.ytSync=!C.ytSync;
+  else return;
+  save();paint()});
+
+/* Démarrer : le clic sur « Démarrer » autorise le son, la vidéo et le micro */
+$('p-go').addEventListener('click',()=>{
+  if(TTS&&C.say)try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(''))}catch(e){}
+  mediaStart();ytStart();if(C.mic)micStart();
+},true);
+
+/* Télécommande / clavier */
+document.addEventListener('keydown',e=>{
+  if(!runVis())return;const k=e.key,t=e.target;
+  if(t&&t.closest&&t.closest('input,textarea,select'))return;
+  if(k===' '||k==='Enter'||k==='MediaPlayPause'){e.preventDefault();try{document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}catch(x){}CTRL.toggle()}
+  else if(['ArrowRight','PageDown','MediaTrackNext','AudioVolumeUp'].includes(k)){e.preventDefault();CTRL.next()}
+  else if(['ArrowLeft','PageUp','MediaTrackPrevious','AudioVolumeDown'].includes(k)){e.preventDefault();CTRL.prev()}
+},true);
+
+/* ---------- on écoute le lecteur v3 ---------- */
+new MutationObserver(onStep).observe($('p-name'),{childList:true,characterData:true,subtree:true});
+new MutationObserver(()=>{const r=isRunning();
+  if(au&&C.media){if(r)au.play().catch(()=>{});else au.pause();try{navigator.mediaSession.playbackState=r?'playing':'paused'}catch(e){}}
+  if(yf&&C.ytSync)ytCmd(r?'playVideo':'pauseVideo');
+}).observe($('p-icon'),{childList:true,subtree:true});
+new MutationObserver(()=>{if(!$('p-end').classList.contains('hid')){say('Bravo, séance terminée');micStop();mediaStop();ytStop()}})
+  .observe($('p-end'),{attributes:true,attributeFilter:['class']});
+let wasOn=false;
+new MutationObserver(()=>{const on=$('player').classList.contains('on');if(on===wasOn)return;wasOn=on;
+  if(!on){micStop();mediaStop();ytStop();if(TTS)try{speechSynthesis.cancel()}catch(e){}}
+}).observe($('player'),{attributes:true,attributeFilter:['class']});
+
+paint();
+})();
+</script>
+<!-- =================== fin du bloc v4 =================== -->
+
 </body>
 </html>
