@@ -181,6 +181,26 @@ ol.steps{padding-left:20px;margin-top:8px}ol.steps li{margin:6px 0}
 .plan div:last-child{border-bottom:none}
 .plan span{color:var(--mut);white-space:nowrap}
 .plan em{display:block;font-style:normal;color:#ffc46b;font-size:13px}
+/* sections repliables */
+details.sec{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:10px}
+details.sec>summary{list-style:none;cursor:pointer;padding:12px 16px;min-height:58px;display:flex;align-items:center;gap:10px;font:800 21px/1.1 "Barlow Condensed",sans-serif}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary small{font:600 14px Barlow,sans-serif;color:var(--mut);margin-left:auto}
+details.sec>summary::after{content:'▾';color:var(--mut);font-size:20px;transition:transform .2s}
+details.sec[open]>summary::after{transform:rotate(180deg)}
+details.sec>summary .dot{width:10px;height:10px;border-radius:50%;background:var(--sport);flex:none}
+.secb{padding:0 12px 12px}
+.secb .card{background:var(--card2)}
+/* curseurs */
+.sl{margin:10px 0 4px}
+.sl .slh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sl .slh b{font-weight:600}
+.sl .slh span{font:800 22px "Barlow Condensed",sans-serif;color:var(--sport);min-width:52px;text-align:right}
+input[type=range]{width:100%;height:36px;accent-color:var(--sport);touch-action:pan-y}
+.mixbar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:6px 0 2px;background:var(--line)}
+.mixbar i{display:block;height:100%}
+.diag{font-size:13px;margin-top:8px;color:var(--mut)}
+.diag b{color:#ff9b9b;font-weight:600}.diag .ok{color:#8fd694}
 .hid{display:none!important}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
@@ -247,17 +267,19 @@ ol.steps{padding-left:20px;margin-top:8px}ol.steps li{margin:6px 0}
   <div class="ovh"><b>FC en direct</b><button class="b" id="hh-close">Fermer</button></div>
   <div class="wrap">
     <p class="lead">La montre envoie la fréquence cardiaque en Bluetooth, la tablette l'affiche pendant la séance. Ta montre continue d'enregistrer l'activité normalement.</p>
-    <h2>1. Sur la montre</h2>
+    <div class="warn" style="margin-top:12px"><b>Piège n° 1 :</b> l'option « Diffuser <u>pendant l'activité</u> » de la Fenix 6 n'émet qu'en ANT+, que la tablette ne capte pas. Il faut lancer <b>« Diffuser la FC »</b> à la main : l'écran de la montre affiche alors un cœur et ta FC.</div>
+    <h2>1. Sur la montre, AVANT de toucher Connecter</h2>
     <ol class="steps">
-      <li><b>Fenix 6</b> : depuis le widget fréquence cardiaque, maintiens MENU › <b>Options FC › Diffuser pendant l'activité</b>, puis démarre une activité (Cardio, Musculation…). Ou, sans activité : Options FC › <b>Diffuser la FC</b>.</li>
-      <li><b>Epix Pro</b> : démarre l'activité, puis dans ses réglages : <b>Diffuser la FC</b>. Ou, sans activité : menu des commandes (maintiens LIGHT) › icône <b>Diffusion FC</b>.</li>
-      <li><b>Forerunner</b> : selon le modèle, réglages de l'activité › <b>Diffuser la FC</b>, ou widget FC › Options › Diffuser pendant l'activité.</li>
+      <li><b>Fenix 6</b> : maintiens MENU › <b>Capteurs et accessoires › FC au poignet › Diffuser la FC</b> (ou widget FC › maintiens MENU › Options FC › Diffuser la FC), puis START. L'écran de diffusion doit rester affiché.</li>
+      <li><b>Epix Pro</b> : maintiens LIGHT (menu des commandes) › icône <b>Diffusion FC</b>, ou MENU › Capteurs et accessoires › FC au poignet › <b>Diffuser la FC</b>.</li>
+      <li><b>Forerunner</b> : MENU › Capteurs et accessoires › FC au poignet › Diffuser la FC (le chemin varie un peu selon le modèle).</li>
     </ol>
     <h2>2. Sur la tablette</h2>
     <ol class="steps">
-      <li>Bluetooth activé. Ouvre la page dans <b>Chrome</b>, depuis son adresse GitHub (https) : un fichier ouvert directement ne peut pas utiliser le Bluetooth.</li>
-      <li>Touche <b>❤ Connecter</b> à côté du prénom, choisis la montre dans la liste (« Fenix 6 », « Epix Pro »…), puis Associer.</li>
-      <li>Si la liste est vide : autorise Chrome à accéder aux « Appareils à proximité » et à la position (Réglages Android › Applis › Chrome › Autorisations).</li>
+      <li>Bluetooth <b>et Localisation</b> activés (Android en a besoin pour chercher les appareils).</li>
+      <li>La page doit être ouverte dans <b>Chrome</b> depuis l'adresse <b>https://…github.io/…</b> (GitHub Pages). Pas depuis un fichier téléchargé, Google Drive ou l'aperçu de github.com. La ligne « Diagnostic » de la carte FC te dit si c'est bon.</li>
+      <li>N'associe pas la montre dans les réglages Bluetooth d'Android : c'est Chrome qui s'en charge. Touche <b>❤ Connecter</b>, choisis la montre dans la liste, puis Associer.</li>
+      <li>Si la liste reste vide : bouton <b>Recherche large</b> (affiche tous les appareils Bluetooth). Et vérifie Réglages Android › Applis › Chrome › Autorisations › <b>Appareils à proximité</b> et <b>Position</b> autorisés.</li>
     </ol>
     <div class="info">Deux montres peuvent être connectées en même temps : une par participant. Les zones sont calculées depuis la FC au seuil de chaque profil.</div>
     <div class="warn">Sur iPad, Safari ne sait pas faire : il faut l'appli gratuite Bluefy. La diffusion use plus vite la batterie de la montre.</div>
@@ -389,6 +411,8 @@ const PR=o=>K({p:[112,168],t:-87,rl:[90,90],ll:[90,90],ra:[268,268],la:[268,268]
 const QD=o=>K({p:[128,138],t:-80,rl:[0,90],ll:[0,90],ra:[0,0],la:[0,0],...(o||{})});
 const W2=o=>K({p:[100,124],rl:[62,-8],ll:[-40,-40],ra:[90,90],la:[-90,-90],...(o||{})});
 const TEA=o=>K({p:[110,170],t:-35,rl:[140,140],ll:[140,140],ra:[130,130],la:[130,130],...(o||{})});
+const HANG={h:[100,30],n:[100,47],p:[100,102],le:[93,22],lh:[96,-4],re:[107,22],rh:[104,-4],lk:[99,137],lf:[99,172],rk:[101,137],rf:[101,172]};
+const PUP={h:[98,2],n:[100,16],p:[100,71],le:[114,30],lh:[96,-4],re:[116,30],rh:[104,-4],lk:[99,106],lf:[99,141],rk:[101,106],rf:[101,141]};
 const FWIDE=FR({lk:[84,145],lf:[74,180],rk:[116,145],rf:[126,180]});
 const FWSQ={h:[100,66],n:[100,83],p:[100,134],le:[88,110],lh:[96,128],re:[112,110],rh:[104,128],lk:[74,140],lf:[80,180],rk:[126,140],rf:[120,180]};
 
@@ -529,6 +553,12 @@ const LIB=[
  {k:'sphinx',n:'Sphinx',cat:'yoga',lv:1,m:'DT|eti|',cue:'Sur les avant-bras, poitrine ouverte, bassin au sol',d:'À plat ventre, coudes sous les épaules, avant-bras au sol. Redresse doucement la poitrine sans pousser sur les mains. Relâche les fessiers, respire.',per:5000,f:[K({p:[122,168],t:-74,rl:[90,90],ll:[90,90],ra:[0,-90],la:[0,-90]}),K({p:[122,168],t:-69,rl:[90,90],ll:[90,90],ra:[0,-90],la:[0,-90]})]},
  {k:'boat',n:'Bateau (Navasana)',cat:'yoga',lv:2,m:'T|gai|',cue:'En V tenu, dos droit, bras devant',d:'Assis, penche le buste en arrière dos droit et décolle les pieds, tibias parallèles au sol (ou jambes tendues). Bras tendus devant. Tiens en respirant.',per:3000,f:[TEA({t:-40,rl:[150,90],ll:[150,90],ra:[95,95],la:[95,95]}),TEA({t:-44,rl:[148,92],ll:[148,92],ra:[95,95],la:[95,95]})]},
  {k:'savasana',n:'Relaxation (Savasana)',cat:'yoga',lv:1,m:'X|res|',cue:'Allongé, relâche tout, respiration lente',d:'Allongé sur le dos, bras légèrement écartés, paumes vers le ciel. Ferme les yeux, relâche chaque partie du corps des pieds à la tête. Respiration naturelle.',per:7000,f:[LY({ra:[80,80]}),LY({ra:[80,80],t:-91})]},
+
+ /* ---------- BARRE DE TRACTION ---------- */
+ {k:'deadhang',n:'Suspension à la barre',cat:'haut',bar:1,lv:1,m:'EBD|mob|tp',cue:'Bras tendus, épaules légèrement engagées, respire',d:'Suspends-toi bras tendus, prise largeur d’épaules, paumes vers l’avant. Garde les épaules un peu engagées, sans te laisser pendre complètement. 10 à 30 s. Décompresse le dos et renforce la prise, utile pour tenir le wing.',per:4000,f:[HANG,{...HANG,lf:[96,172],rf:[104,172]}]},
+ {k:'scappull',n:'Tirage scapulaire',cat:'haut',bar:1,lv:1,m:'ED|for|t',cue:'Bras tendus : descends les épaules pour monter de 3 cm',d:'Suspendu bras tendus, tire les omoplates vers le bas et l’arrière : le corps monte de quelques centimètres sans plier les coudes. Redescends lentement. La porte d’entrée des tractions.',per:2400,f:[HANG,{...sh(HANG,0,-5),lh:HANG.lh,rh:HANG.rh,le:[94,18],re:[106,18]}]},
+ {k:'hangknee',n:'Relevés de genoux suspendu',cat:'abdos',bar:1,lv:2,m:'TH|gai|tp',cue:'Suspendu, monte les genoux à la hauteur des hanches',d:'Suspendu bras tendus, monte les genoux jusqu’à la hauteur des hanches en enroulant légèrement le bassin, redescends sans balancer.',per:2600,f:[HANG,{...HANG,lk:[134,104],lf:[132,139],rk:[136,106],rf:[134,141]}]},
+ {k:'pullup',n:'Tractions',cat:'haut',bar:1,lv:3,m:'DB|for|tc',cue:'Menton au-dessus de la barre, redescends lentement',d:'Prise pronation largeur d’épaules. Tire en amenant la poitrine vers la barre jusqu’à passer le menton, redescends en 3 s jusqu’aux bras tendus. Version facile : élastique sous les pieds ou négatives seules.',per:3200,f:[HANG,PUP]},
 
  /* ---------- AUTRES ---------- */
  {k:'curtsy',n:'Fente croisée (révérence)',cat:'jambes',lv:2,m:'FJH|for|',cue:'Pied qui recule en diagonale derrière l’autre',d:'Debout, recule un pied en diagonale derrière l’autre comme une révérence, descends en fente. Genou avant dans l’axe du pied. Cible les fessiers moyens.',per:3600,f:[F,{h:[102,64],n:[101,81],p:[100,134],le:[88,106],lh:[96,128],re:[112,106],rh:[104,128],lk:[86,152],lf:[82,180],rk:[96,168],rf:[126,178]},F,mir({h:[102,64],n:[101,81],p:[100,134],le:[88,106],lh:[96,128],re:[112,106],rh:[104,128],lk:[86,152],lf:[82,180],rk:[96,168],rf:[126,178]})]},
@@ -676,7 +706,8 @@ const MATN={aucun:'Sans matériel',elastique:'Élastique',halteres:'Haltères'};
    STOCKAGE, PROFILS
    ===================================================================== */
 const LSK='mes-seances-v2';
-const CFG0={mat:{elastique:false,halteres:false,chaise:true},kite:true,tgt:'pace',vo2:51,vma:14.6,lthr:179,ltp:'4:48',dur:30,wn:4,wr:1};
+const MIX0={J:60,B:10,T:30,car:30,pui:40,gai:30};
+const CFG0={mat:{elastique:false,halteres:false,chaise:true,barre:false},mix:{...MIX0},open:['today'],kite:true,tgt:'pace',vo2:51,vma:14.6,lthr:179,ltp:'4:48',dur:30,wn:4,wr:1};
 const PEOPLE0=[{id:'p1',n:'Syl20',lv:2,lims:['traction','supi'],lthr:179,on:true},{id:'p2',n:'Elodaille',lv:2,lims:['cheville'],lthr:170,on:false}];
 let store={t:0,sessions:[],runs:[],log:[],week:null,cfg:JSON.parse(JSON.stringify(CFG0)),people:JSON.parse(JSON.stringify(PEOPLE0))};
 const cfg=()=>store.cfg;
@@ -701,7 +732,7 @@ function loadStore(d){
   if(Array.isArray(d.log))store.log=d.log.filter(x=>x&&x.d).slice(-400);
   if(d.week&&Array.isArray(d.week.items))store.week=d.week;
   if(d.lastExport)store.lastExport=d.lastExport;
-  if(d.cfg&&typeof d.cfg==='object')store.cfg={...CFG0,...d.cfg,mat:{...CFG0.mat,...(d.cfg.mat||{})}};
+  if(d.cfg&&typeof d.cfg==='object')store.cfg={...CFG0,...d.cfg,mat:{...CFG0.mat,...(d.cfg.mat||{})},mix:{...MIX0,...(d.cfg.mix||{})}};
   const pp=cleanPeople(d.people);if(pp)store.people=pp;
   store.t=d.t||0;
 }
@@ -714,7 +745,7 @@ const lead=()=>act()[0];
 const pname=id=>(store.people.find(p=>p.id===id)||{n:'?'}).n;
 
 /* ---------- Contraintes et variantes ---------- */
-const eqOK=X=>(X.mat==='aucun'||cfg().mat[X.mat])&&(!X.box||cfg().mat.chaise);
+const eqOK=X=>(X.mat==='aucun'||cfg().mat[X.mat])&&(!X.box||cfg().mat.chaise)&&(!X.bar||cfg().mat.barre);
 function status(X,p){
   if(!X||!p)return {s:'ok'};let pr=null;
   for(const l of p.lims){const L=LIMS[l];if(!L)continue;
@@ -848,8 +879,30 @@ function famPool(f,lv){
   let p=LIB.filter(X=>base(X)&&okEx(X,lv));if(p.length<3)p=LIB.filter(X=>base(X)&&okEx(X,3));return p;
 }
 const stretchPool=yoga=>LIB.filter(X=>okEx(X,3)&&!X.dyn&&(X.cat==='etirement'||(yoga&&X.cat==='yoga'&&(X.ty==='eti'||X.ty==='res'))));
-function generate(fams,dur,lv,yogaEnd){
-  fams=(fams&&fams.length?fams:['jambes']).slice(0,3);
+/* Sur mesure : curseurs zones (jambes / bras / abdos) × intensité (cardio / puissance / gainage) */
+const ZG=X=>{const g=[];if(X.z.some(z=>'JFHC'.includes(z)))g.push('J');if(X.z.some(z=>'EB'.includes(z))||(X.cat==='haut'))g.push('B');if(X.z.includes('T')||(X.z.includes('D')&&X.cat!=='haut'))g.push('T');return g};
+const TG=X=>X.ty==='car'?'car':(X.ty==='plio'||X.ty==='for')?'pui':(X.ty==='gai'||X.ty==='equ')?'gai':null;
+const MIXN={J:'Jambes',B:'Bras / épaules',T:'Abdos / tronc',car:'Cardio',pui:'Puissance',gai:'Gainage'};
+function quotas(w,n){const ks=Object.keys(w),s=ks.reduce((a,k)=>a+Math.max(0,w[k]),0)||1;
+  const raw=ks.map(k=>[k,Math.max(0,w[k])/s*n]),q={};raw.forEach(([k,v])=>q[k]=Math.floor(v));
+  let left=n-Object.values(q).reduce((a,b)=>a+b,0);raw.sort((a,b)=>(b[1]%1)-(a[1]%1));for(const [k,v] of raw){if(left<=0)break;if(v>0){q[k]++;left--}}return q}
+function mixMain(m,N,lv,used){
+  const zq=quotas({J:m.J,B:m.B,T:m.T},N),tq=quotas({car:m.car,pui:m.pui,gai:m.gai},N),slots=[];
+  const zs=[];['J','T','B'].forEach(z=>{for(let i=0;i<zq[z];i++)zs.push(z)});
+  const order=[];for(let i=0;zs.length;i++){for(const z of ['J','T','B']){const j=zs.indexOf(z);if(j>=0)order.push(zs.splice(j,1)[0])}}
+  const tl=[];['pui','car','gai'].forEach(t=>{for(let i=0;i<tq[t];i++)tl.push(t)});
+  const base=LIB.filter(X=>!X.dyn&&X.cat!=='etirement'&&TG(X));
+  order.forEach(z=>{
+    const tryPick=(lvl,needT)=>{for(const t of needT){let pool=base.filter(X=>ZG(X).includes(z)&&TG(X)===t&&okEx(X,lvl));if(t==='pui'&&lv>=2&&Math.random()<.5){const pp=pool.filter(X=>X.ty==='plio'&&!used.has(X.k));if(pp.length)pool=pp}const p=wpick(pool,1,lv,used);if(p.length){const j=tl.indexOf(t);if(j>=0)tl.splice(j,1);return [p[0],t]}}return null};
+    const pref=[...new Set(tl)].sort((a,b)=>tl.filter(x=>x===b).length-tl.filter(x=>x===a).length);
+    let r=tryPick(lv,pref)||tryPick(3,pref)||tryPick(lv,['pui','gai','car'])||tryPick(3,['pui','gai','car']);
+    if(r)slots.push(r);
+  });
+  const SEC={car:40,pui:0,gai:30};
+  return slots.map(([X,t])=>{let sec=t==='pui'?(X.ty==='plio'?20:40+(lv-2)*5):SEC[t]+(lv-2)*5;if(X.side&&sec>30)sec=Math.round(sec*.75/5)*5;return it(X.k,sec,{s:X.side})});
+}
+function generate(fams,dur,lv,yogaEnd,mix){
+  fams=(fams&&fams.length?fams:['jambes']).slice(0,3);if(mix)fams=['mix'];
   const used=new Set(['march','jacks','legswing','hipcircle']);
   const I=(X,sec)=>it(X.k,X.side&&sec>30?Math.round(sec*.75/5)*5:sec,{s:X.side});
   let warm=WARM().filter(x=>status(EX[x.ex],lead()).s!=='no');if(warm.length<4)warm.push(it('thoracic',40));
@@ -857,6 +910,10 @@ function generate(fams,dur,lv,yogaEnd){
   let nStretch={20:4,30:5,40:6,60:8}[dur]||5;
   const souple=fams.includes('souplesse');
   if(souple){warm=[it('march',90),it('hipcircle',40),it('legswing',20,{s:1})];cool=[];stretchSec=dur>=40?60:50}
+  else if(mix){
+    main=mixMain(mix,{20:6,30:7,40:8,60:9}[dur]||7,lv,used);
+    const ts=mix.car+mix.pui+mix.gai||1;pause=Math.round((15+15*mix.pui/ts)/5)*5;rr=mix.pui/ts>=.4?60:40;
+  }
   else{
     const N={20:6,30:7,40:8,60:9}[dur]||7,groups=[];
     fams.forEach((f,i)=>{const c=Math.floor(N/fams.length)+(i<N%fams.length?1:0),sec0=FCF[f][0],sec=f==='puissance'?sec0:sec0+(lv-2)*5;
@@ -873,6 +930,9 @@ function generate(fams,dur,lv,yogaEnd){
   const budget=dur*60-tsum(warm)-tsum(cool)-tsum(st);
   let rounds=1;
   if(main.length){const n=main.reduce((a,x)=>a+stepsN(x),0),per=tsum(main)+pause*(n-1);rounds=clamp(Math.round((budget+rr)/(per+rr)),1,10)}
+  if(mix){const ts=mix.car+mix.pui+mix.gai||1,zs=mix.J+mix.B+mix.T||1,pc=(v,s)=>Math.round(v/s*100);
+    const ty=mix.pui/ts>=.45?'puissance':mix.car/ts>=.45?'cardio':mix.gai/ts>=.5?'gainage':mix.J/zs>=.5&&mix.pui/ts>=.3?'pumping':'mixte';
+    return {id:'g'+Date.now(),name:`Sur mesure ${dur} min`,ty,desc:`Jambes ${pc(mix.J,zs)} % · bras ${pc(mix.B,zs)} % · abdos ${pc(mix.T,zs)} % — cardio ${pc(mix.car,ts)} % · puissance ${pc(mix.pui,ts)} % · gainage ${pc(mix.gai,ts)} % · niveau ${LVN[lv].toLowerCase()}`,rounds,pause,roundRest:rr,blocks:{warmup:warm,main,cooldown:cool,stretch:st}}}
   const ty=fams.length===1?FAM2TY[fams[0]]:'mixte';
   return {id:'g'+Date.now(),name:`${fams.map(f=>FAMN[f]).join(' + ')} ${dur} min`,ty,desc:`Tirée au sort · niveau ${LVN[lv].toLowerCase()}${yogaEnd?' · fin yoga':''}`,rounds,pause,roundRest:rr,blocks:{warmup:warm,main,cooldown:cool,stretch:st}};
 }
@@ -894,6 +954,7 @@ function makeFig(svg){
   svg.setAttribute('viewBox','0 -12 200 200');
   mk('line',{x1:0,y1:181,x2:200,y2:181,stroke:'#2e3440','stroke-width':2},svg);
   const bx=mk('rect',{x:112,y:150,width:52,height:31,rx:3,fill:'#2a303b',stroke:'#4a5263','stroke-width':2},svg);
+  const bar=mk('line',{x1:55,y1:-4,x2:145,y2:-4,stroke:'#9aa3b2','stroke-width':4,'stroke-linecap':'round'},svg);
   const g=mk('g',{},svg);
   const st={'stroke-linecap':'round','stroke-linejoin':'round',fill:'none'};
   const bn=mk('line',{stroke:'#e8d44d','stroke-width':3,'stroke-linecap':'round'},g);
@@ -916,6 +977,7 @@ function makeFig(svg){
     else bn.style.display='none';
     if(X.db){ln(d2,[q.rh[0]-6,q.rh[1]],[q.rh[0]+6,q.rh[1]]);if(X.db!=='r')ln(d1,[q.lh[0]-6,q.lh[1]],[q.lh[0]+6,q.lh[1]]);else d1.style.display='none'}
     else{d1.style.display='none';d2.style.display='none'}
+    bar.style.display=X.bar?'':'none';
     bx.style.display=X.box?'':'none';bx.setAttribute('x',X.box==='l'?26:112);
     bx.setAttribute('transform',flip?'translate(200 0) scale(-1 1)':'');
     g.setAttribute('transform',flip?'translate(200 0) scale(-1 1)':'');
@@ -1109,7 +1171,7 @@ function suggest(){
 }
 function prep(ty){
   if(ty.startsWith('run-')){runK=(RUNKEY[ty]||(()=>'random'))();runR=genRun(runK,runL);tab('run');return}
-  gen.fams=(TY2FAM[ty]||['jambes']).slice();genS=generate(gen.fams,gen.dur,gen.lv,gen.yoga);tab('gen');
+  gen.mode='fam';gen.fams=(TY2FAM[ty]||['jambes']).slice();genS=generate(gen.fams,gen.dur,gen.lv,gen.yoga);tab('gen');
 }
 
 /* =====================================================================
@@ -1120,15 +1182,24 @@ const ZC=['#444','#7c8db5','#3ec7b0','#e8d44d','#ff8a3d','#ff5d73'];
 const hrZone=(b,lt)=>{const r=b/lt;return r<.85?1:r<.90?2:r<.95?3:r<1?4:5};
 const hrLive=pid=>{const h=HR[pid];return h&&h.st==='on'&&Date.now()-h.t<6000?h.bpm:0};
 const btOK=()=>!!(navigator.bluetooth&&navigator.bluetooth.requestDevice);
-async function hrConnect(pid){
-  if(!btOK()){$('hrhelp').classList.add('on');toast('Bluetooth indisponible ici : ouvre la page dans Chrome, depuis son adresse https');return}
-  const h=HR[pid]||(HR[pid]={bpm:0,t:0,st:'off',rec:[]});h.manual=false;
+let hrErr='';
+async function hrConnect(pid,wide){
+  if(!btOK()){$('hrhelp').classList.add('on');toast('Bluetooth indisponible ici : voir le diagnostic');hrRender();return}
+  const old=HR[pid];if(old)hrStop(pid);
+  const h=HR[pid]={bpm:0,t:0,st:'off',rec:[],manual:false};hrErr='';
   try{
-    const dev=await navigator.bluetooth.requestDevice({filters:[{services:['heart_rate']}]});
+    const dev=await navigator.bluetooth.requestDevice(wide?{acceptAllDevices:true,optionalServices:['heart_rate']}:{filters:[{services:['heart_rate']}],optionalServices:['heart_rate']});
     h.dev=dev;h.name=dev.name||'Montre';dev.addEventListener('gattserverdisconnected',()=>hrLost(pid));
     await hrAttach(pid);
-  }catch(e){if(e&&e.name==='NotFoundError'){if(!h.dev)delete HR[pid];hrRender();return}
-    h.st='off';hrRender();toast('Connexion impossible. La montre diffuse-t-elle la FC ?')}
+  }catch(e){
+    const n=e&&e.name,m=e&&e.message||String(e);
+    if(n==='NotFoundError'&&/cancel/i.test(m)){delete HR[pid];hrErr=wide?'':'Liste fermée sans choix. Si ta montre n’y était pas : lance « Diffuser la FC » sur la montre, puis réessaie ou essaie « Recherche large ».'}
+    else if(n==='NotFoundError'){delete HR[pid];hrErr='Aucune montre trouvée. Lance « Diffuser la FC » sur la montre (écran avec un cœur), active Bluetooth + Localisation, puis réessaie.'}
+    else if(n==='SecurityError'){delete HR[pid];hrErr='Bluetooth bloqué par le navigateur : la page doit être ouverte depuis l’adresse https://…github.io dans Chrome.'}
+    else if(/heart_rate|service/i.test(m)){try{h.dev&&h.dev.gatt.disconnect()}catch(x){}delete HR[pid];hrErr='Cet appareil ne transmet pas de FC. Choisis la montre, après avoir lancé « Diffuser la FC ».'}
+    else{delete HR[pid];hrErr='Erreur : '+n+' – '+m}
+    hrRender();if(hrErr)toast('Connexion impossible : voir le message sous les boutons');
+  }
 }
 async function hrAttach(pid){
   const h=HR[pid];if(!h||!h.dev)return;h.st='conn';hrRender();
@@ -1144,20 +1215,26 @@ function hrSample(pid,b){const h=HR[pid];h.bpm=b;h.t=Date.now();
 function hrChip(p,big){const b=hrLive(p.id),z=b?hrZone(b,p.lthr):0,h=HR[p.id];
   const st=!h?'':h.st==='conn'?'connexion…':h.st==='lost'?'perdue, je réessaie':b?'Z'+z:'en attente';
   return `<div class="hrb" style="--hz:${ZC[z]}"><small>${esc(p.n)}</small><b>${b||'--'}</b><i>${st}</i></div>`}
+function hrDiag(){
+  const sec=window.isSecureContext,bt=btOK(),ch=/Chrome\//.test(navigator.userAgent)&&!/SamsungBrowser|Firefox|EdgA|OPR/.test(navigator.userAgent),fr=window.top!==window.self;
+  const it=(ok,t)=>ok?`<span class="ok">✓ ${t}</span>`:`<b>✗ ${t}</b>`;
+  return `<div class="diag">Diagnostic : ${it(sec&&location.protocol==='https:',location.protocol==='https:'?'adresse https':'adresse https (ici : '+esc(location.protocol.replace(':',''))+' → ouvre la version github.io)')} · ${it(bt,'Bluetooth web')} · ${it(ch,'Chrome')}${fr?' · <b>✗ page intégrée dans une autre (ouvre-la seule)</b>':''}</div>`;
+}
 function hrCard(){
   const ps=act();
-  return `${btOK()?'':'<p class="note" style="margin-top:0">Bluetooth indisponible sur ce navigateur : ouvre la page dans Chrome sur la tablette, depuis l’adresse GitHub.</p>'}
-  <div class="hrbig">${ps.map(p=>hrChip(p,1)).join('')}</div>
-  <div class="acts" style="margin-top:8px">${ps.map(p=>HR[p.id]?`<button class="b sm" data-hr="stop" data-pid="${p.id}">Déconnecter ${esc(p.n)}</button>`:`<button class="b hrt sm" data-hr="go" data-pid="${p.id}">❤ Connecter ${esc(p.n)}</button>`).join('')}<button class="b sm" data-hr="help">Comment ?</button></div>`;
+  return `<div class="hrbig">${ps.map(p=>hrChip(p,1)).join('')}</div>
+  <div class="acts" style="margin-top:8px">${ps.map(p=>HR[p.id]?`<button class="b sm" data-hr="stop" data-pid="${p.id}">Déconnecter ${esc(p.n)}</button>`:`<button class="b hrt sm" data-hr="go" data-pid="${p.id}">❤ Connecter ${esc(p.n)}</button><button class="b sm" data-hr="wide" data-pid="${p.id}">Recherche large</button>`).join('')}<button class="b sm" data-hr="help">Comment ?</button></div>
+  ${hrErr?`<div class="warn">${esc(hrErr)}</div>`:''}${hrDiag()}`;
 }
-function hrRender(){
-  const a=$('hr-home');if(a)a.innerHTML=hrCard();
-  if(playerOpen&&!$('p-start').classList.contains('hid'))$('p-hrc').innerHTML=hrCard();
+function hrRender(soft){
+  const upd=el=>{if(!el)return;if(soft){const g=el.querySelector('.hrbig');if(g){g.innerHTML=act().map(p=>hrChip(p,1)).join('');return}}el.innerHTML=hrCard()};
+  upd($('hr-home'));
+  if(playerOpen&&!$('p-start').classList.contains('hid'))upd($('p-hrc'));
   if(playerOpen&&!$('p-run').classList.contains('hid')){const c=act().filter(p=>HR[p.id]);$('p-hr').innerHTML=c.map(p=>hrChip(p)).join('')}
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-hr]');if(!b)return;e.stopPropagation();
-  const a=b.dataset.hr;if(a==='go')hrConnect(b.dataset.pid);else if(a==='stop')hrStop(b.dataset.pid);else if(a==='help')$('hrhelp').classList.add('on')},true);
-setInterval(()=>{try{hrRender()}catch(e){}},1000);
+  const a=b.dataset.hr;if(a==='go')hrConnect(b.dataset.pid);else if(a==='wide')hrConnect(b.dataset.pid,true);else if(a==='stop')hrStop(b.dataset.pid);else if(a==='help')$('hrhelp').classList.add('on')},true);
+setInterval(()=>{try{hrRender(1)}catch(e){}},1000);
 function hrSummary(p){
   const h=HR[p.id];if(!h||h.rec.length<5)return null;const r=h.rec,z=[0,0,0,0,0,0];let sum=0,max=0,tt=0;
   r.forEach((s,i)=>{const dt=Math.min(5,(r[i+1]?r[i+1][0]:s[0]+1)-s[0])||1;z[hrZone(s[1],p.lthr)]+=dt;sum+=s[1]*dt;tt+=dt;max=Math.max(max,s[1])});
@@ -1209,31 +1286,35 @@ function weekHtml(){
   <div class="acts" style="margin-top:6px"><button class="b" data-a="newweek">Nouveau tirage</button></div>
   <p class="note">Intense et récup alternent. Un jour de kite remplace la séance intense du jour : coche-la.</p></div>`;
 }
+const SEC=(id,title,body,extra)=>`<details class="sec" data-sec="${id}"${(cfg().open||[]).includes(id)?' open':''}><summary>${title}<small>${extra||''}</small></summary><div class="secb">${body}</div></details>`;
 function renderList(){
   const s=suggest(),c=cfg(),mine=store.sessions;
-  const hist=store.log.slice(-8).reverse();
+  const hist=store.log.slice(-8).reverse(),W2=curWeek(),wd=W2.items.filter(x=>x.done).length;
+  const live=act().map(p=>hrLive(p.id)).filter(Boolean);
   $('v-list').innerHTML=`<div class="wrap"><div class="hd"><h1>Mes séances</h1><button class="b" data-a="prof">Profils</button></div>
-  <p class="lead">Prépa kite parawing & pumping · participants : ${whoLine()} · VMA ${c.vma} km/h</p>
-  <h2>Aujourd’hui</h2><div class="card sug"><div class="t"><b>${TYL[s.ty]}</b><span>${s.ty.startsWith('run-')?'course':gen.dur+' min'}</span></div><div class="d">${esc(s.why)}</div>
-  <div class="acts"><button class="b go" data-a="prep" data-ty="${s.ty}">Préparer</button></div></div>
-  <h2>FC en direct</h2><div class="card hrc" id="hr-home">${hrCard()}</div>
-  <h2>Ma semaine</h2>${weekHtml()}
-  <h2>Mes séances</h2>${mine.length||store.runs.length?mine.map(card).join('')+store.runs.map(runCard).join(''):'<div class="empty">Aucune séance enregistrée. Génère-en une, ou « Personnaliser » une séance prête.</div>'}
-  <h2>Séances prêtes</h2>${PRESETS.map(card).join('')}
-  <h2>Séances montre (.fit)</h2><p class="note" style="margin-top:-4px">Mixte 20, 30 et 40 min en version facile (sans saut) et dure (sauts). Le bouton ⌚ .fit donne le fichier à copier sur la Garmin.</p>${FITP.map(card).join('')}
-  <h2>Historique</h2>${hist.length?`<div class="card">${hist.map(x=>`<div class="wk"><span class="dy">${new Date(x.d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}</span><b>${esc(x.n||TYL[x.ty]||'')}<small>${TYL[x.ty]||''}${x.s?' · '+fmin(x.s):''}${x.hr?' · '+Object.entries(x.hr).map(([n,v])=>esc(n)+' moy '+v.avg+' / max '+v.max).join(', '):''}</small></b></div>`).join('')}</div>`:'<div class="empty">Les séances terminées dans le lecteur, ou cochées, s’affichent ici.</div>'}
-  <h2>Sauvegarde</h2><div class="card"><div class="acts"><button class="b go" data-a="export">Exporter un fichier</button><button class="b" data-a="import">Importer un fichier</button></div>
+  <p class="lead">Participants : ${whoLine()} · touche un titre pour l’ouvrir ou le fermer.</p>
+  <div class="card sug" style="margin-top:14px"><div class="t"><b>Aujourd’hui : ${TYL[s.ty]}</b><span>${s.ty.startsWith('run-')?'course':gen.dur+' min'}</span></div><div class="d">${esc(s.why)}</div>
+  <div class="acts"><button class="b go" data-a="prep" data-ty="${s.ty}">Préparer</button><button class="b" data-a="tab" data-t="gen">Sur mesure</button></div></div>
+  ${SEC('mine','Mes séances',mine.length||store.runs.length?mine.map(card).join('')+store.runs.map(runCard).join(''):'<div class="empty">Aucune séance enregistrée. Génère-en une, ou « Personnaliser » une séance prête.</div>',(mine.length+store.runs.length)+'')}
+  ${SEC('presets','Séances prêtes',PRESETS.map(card).join(''),PRESETS.length+'')}
+  ${SEC('montre','Séances montre (.fit)','<p class="note" style="margin:0 0 8px">Mixte 20, 30 et 40 min en version facile (sans saut) et dure (sauts). ⌚ .fit donne le fichier à copier sur la Garmin.</p>'+FITP.map(card).join(''),'6')}
+  ${SEC('week','Ma semaine',weekHtml(),wd+'/'+W2.items.length)}
+  ${SEC('hr','FC en direct',`<div class="card hrc" id="hr-home" style="margin:0">${hrCard()}</div>`,live.length?live.join(' · ')+' bpm':'')}
+  ${SEC('hist','Historique',hist.length?`<div class="card">${hist.map(x=>`<div class="wk"><span class="dy">${new Date(x.d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}</span><b>${esc(x.n||TYL[x.ty]||'')}<small>${TYL[x.ty]||''}${x.s?' · '+fmin(x.s):''}${x.hr?' · '+Object.entries(x.hr).map(([n,v])=>esc(n)+' moy '+v.avg+' / max '+v.max).join(', '):''}</small></b></div>`).join('')}</div>`:'<div class="empty">Les séances terminées dans le lecteur, ou cochées, s’affichent ici.</div>',hist.length?'':'vide')}
+  ${SEC('save','Sauvegarde',`<div class="acts"><button class="b go" data-a="export">Exporter un fichier</button><button class="b" data-a="import">Importer un fichier</button></div>
   <p class="note">Exporter télécharge <b>mes-seances.json</b> (séances, profils, historique) : range-le dans Google Drive. Importer le recharge. ${store.lastExport?'Dernier export : '+new Date(store.lastExport).toLocaleDateString('fr-FR')+'.':'Aucun export pour l’instant.'}</p>
-  <div class="acts" style="margin-top:8px"><button class="b sm" data-a="copy">Copier en texte</button><button class="b sm" data-a="paste">Coller un texte</button></div></div>
+  <div class="acts" style="margin-top:8px"><button class="b sm" data-a="copy">Copier en texte</button><button class="b sm" data-a="paste">Coller un texte</button></div>`)}
   <input type="file" id="imp-file" accept=".json,application/json,text/plain" class="hid"></div>`;
   $('imp-file').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();
     rd.onload=()=>{let d;try{d=JSON.parse(rd.result)}catch(x){toast('Fichier illisible');return}restoreData(d)};rd.readAsText(f)};
 }
+$('v-list').addEventListener('toggle',e=>{const d=e.target;if(!d.dataset||!d.dataset.sec)return;const c=cfg(),o=new Set(c.open||[]);d.open?o.add(d.dataset.sec):o.delete(d.dataset.sec);c.open=[...o];try{localStorage.setItem(LSK,JSON.stringify(store))}catch(x){}},true);
 $('v-list').addEventListener('click',e=>{
   const b=e.target.closest('[data-a],[data-wn],[data-wr]');if(!b)return;const a=b.dataset.a;
   if(b.dataset.wn){cfg().wn=+b.dataset.wn;makeWeek();renderList();return}
   if(b.dataset.wr){cfg().wr=+b.dataset.wr;makeWeek();renderList();return}
   if(a==='prof'){openProf();return}
+  if(a==='tab'){tab(b.dataset.t);return}
   if(a==='prep'){prep(b.dataset.ty);return}
   if(a==='newweek'){makeWeek();renderList();toast('Nouvelle semaine tirée');return}
   if(a==='wk'){const x=curWeek().items.find(i=>i.id===b.dataset.id);if(!x)return;x.done=!x.done;
@@ -1257,7 +1338,7 @@ $('v-list').addEventListener('click',e=>{
 });
 
 /* ---------- Générer ---------- */
-const gen={fams:['kite'],dur:30,lv:2,yoga:false};let genS=null;
+const gen={mode:'mix',fams:['kite'],dur:30,lv:2,yoga:false};let genS=null;
 function planHtml(s){
   const row=x=>{const k=stepEx(x.ex),vs=varsFor(x.ex);return `<div><span style="color:var(--ink);white-space:normal">${EX[k].n}${x.sides?' (D + G)':''}${vs.length?`<em>${vs.map(v=>esc(varTxt(v))).join(' · ')}</em>`:''}</span><span>${(x.sides?'2 × ':'')+fsec(x.sec)}</span></div>`};
   let h='';const B=s.blocks;
@@ -1267,14 +1348,27 @@ function planHtml(s){
   if(B.stretch.length)h+='<h3 class="e">Étirements</h3>'+B.stretch.map(row).join('');
   return h;
 }
+const MIXP=[['pump','Pumping kite',{J:70,B:5,T:25,car:25,pui:45,gai:30}],['equi','Équilibré',{J:40,B:25,T:35,car:33,pui:33,gai:34}],['cardio','Cardio',{J:55,B:15,T:30,car:65,pui:20,gai:15}],['tronc','Tronc solide',{J:20,B:20,T:60,car:15,pui:20,gai:65}],['jambes','Jambes force',{J:80,B:5,T:15,car:10,pui:65,gai:25}]];
+const MIXC={J:'#ff8a3d',B:'#6fb3ff',T:'#c39bff',car:'#ff5d73',pui:'#e8d44d',gai:'#3ec7b0'};
+function mixPct(keys){const m=cfg().mix,s=keys.reduce((a,k)=>a+m[k],0)||1;return Object.fromEntries(keys.map(k=>[k,Math.round(m[k]/s*100)]))}
+function mixBlock(title,keys){const pc=mixPct(keys),m=cfg().mix;
+  return `<div class="card"><div class="t"><b>${title}</b></div><div class="mixbar" data-mb="${keys.join(',')}">${keys.map(k=>`<i style="width:${pc[k]}%;background:${MIXC[k]}"></i>`).join('')}</div>
+  ${keys.map(k=>`<div class="sl"><div class="slh"><b><span style="color:${MIXC[k]};font-size:18px">●</span> ${MIXN[k]}</b><span data-pc="${k}">${pc[k]} %</span></div><input type="range" min="0" max="100" step="5" value="${m[k]}" data-mix="${k}" aria-label="${MIXN[k]}"></div>`).join('')}</div>`}
+function updMix(){[['J','B','T'],['car','pui','gai']].forEach(keys=>{const pc=mixPct(keys);keys.forEach(k=>{const el=$('v-gen').querySelector(`[data-pc="${k}"]`);if(el)el.textContent=pc[k]+' %'});
+  const mb=$('v-gen').querySelector(`[data-mb="${keys.join(',')}"]`);if(mb)[...mb.children].forEach((i,n)=>i.style.width=pc[keys[n]]+'%')})}
 function renderGen(){
-  const c=cfg();
-  const mats=['Sans matériel',c.mat.elastique?'élastique':'',c.mat.halteres?'haltères':'',c.mat.chaise?'chaise':''].filter(Boolean).join(' + ');
+  const c=cfg(),mix=gen.mode==='mix';
+  const mats=['Sans matériel',c.mat.elastique?'élastique':'',c.mat.halteres?'haltères':'',c.mat.chaise?'chaise':'',c.mat.barre?'barre':''].filter(Boolean).join(' + ');
   $('v-gen').innerHTML=`<div class="wrap"><div class="hd"><h1>Générer</h1><button class="b" data-a="prof">Profils</button></div>
-  <p class="lead">Choisis 1 à 3 familles : la séance les mélange, puis finit par les étirements. Matériel : ${mats}.</p>
-  <div class="lbl">Participants</div><div class="who">${chips(people().map(p=>[p.id,esc(p.n)+(p.lims.length?' ⚠':'')]),act().map(p=>p.id),'gp')}</div>
-  <p class="note" style="margin-top:0">Le 1er coché choisit les exercices, les autres reçoivent une variante si besoin.</p>
-  <div class="lbl">Familles (jusqu’à 3)</div><div class="chips">${chips(FAMS,gen.fams,'fam')}</div>
+  <div class="chips" style="margin-top:12px">${chips([['mix','Sur mesure (curseurs)'],['fam','Par famille (Pilates, yoga…)']],gen.mode,'gm')}</div>
+  <details class="sec" style="margin-top:6px"><summary>Participants et matériel<small>${whoLine()}</small></summary><div class="secb">
+  <div class="who">${chips(people().map(p=>[p.id,esc(p.n)+(p.lims.length?' ⚠':'')]),act().map(p=>p.id),'gp')}</div>
+  <p class="note" style="margin-top:0">Le 1er coché choisit les exercices, les autres reçoivent une variante si besoin. Matériel : ${mats} (modifiable dans Profils).</p></div></details>
+  ${mix?`<p class="lead">Règle la part de chaque zone et le type d’effort : la séance suit ces pourcentages.</p>
+  <div class="lbl">Recettes</div><div class="chips">${MIXP.map(([k,l])=>`<button class="chip" data-mp="${k}">${l}</button>`).join('')}</div>
+  ${mixBlock('Zones du corps',['J','B','T'])}${mixBlock('Intensité',['car','pui','gai'])}`
+  :`<p class="lead">Choisis 1 à 3 familles : la séance les mélange, puis finit par les étirements.</p>
+  <div class="lbl">Familles (jusqu’à 3)</div><div class="chips">${chips(FAMS,gen.fams,'fam')}</div>`}
   <div class="lbl">Durée</div><div class="chips">${chips([[20,'20 min'],[30,'30 min'],[40,'40 min'],[60,'60 min']],gen.dur,'dur')}</div>
   <div class="lbl">Niveau</div><div class="chips">${chips([[1,'Facile'],[2,'Moyen'],[3,'Difficile']],gen.lv,'lv')}</div>
   <div class="chips"><button class="chip" data-yo="1" aria-pressed="${gen.yoga}">Étirements avec postures de yoga + relaxation</button></div>
@@ -1285,9 +1379,17 @@ function renderGen(){
   <div class="acts"><button class="b" data-a="fit">⌚ .fit montre</button><button class="b" data-a="save">Enregistrer</button><button class="b" data-a="edit">Modifier</button></div></div>`:''}
   </div>`;
 }
+$('v-gen').addEventListener('input',e=>{const r=e.target.closest('[data-mix]');if(!r)return;
+  const k=r.dataset.mix,G=['J','B','T'].includes(k)?['J','B','T']:['car','pui','gai'],m=cfg().mix,v=clamp(+r.value,0,100),o=G.filter(x=>x!==k),rest=100-v,so=o.reduce((a,x)=>a+m[x],0);
+  o.forEach(x=>m[x]=Math.round(so>0?m[x]/so*rest:rest/o.length));m[k]=v;
+  const d=100-G.reduce((a,x)=>a+m[x],0);if(d){const big=o.reduce((a,x)=>m[x]>m[a]?x:a,o[0]);m[big]=clamp(m[big]+d,0,100)}
+  o.forEach(x=>{const s=$('v-gen').querySelector(`[data-mix="${x}"]`);if(s)s.value=m[x]});updMix()});
+$('v-gen').addEventListener('change',e=>{const r=e.target.closest('[data-mix]');if(!r)return;persist();if(genS){genS=null;const y=window.scrollY;renderGen();window.scrollTo(0,y)}});
 $('v-gen').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;const d=b.dataset;
-  if(d.gp){const p=people().find(x=>x.id===d.gp);if(!p)return;if(p.on&&act().length===1&&act()[0]===p){toast('Au moins un participant');return}p.on=!p.on;persist();renderGen();return}
+  if(d.gm){gen.mode=d.gm;genS=null;renderGen();return}
+  if(d.mp){const r=MIXP.find(x=>x[0]===d.mp);if(r){Object.assign(cfg().mix,r[2]);persist();genS=null;const y=window.scrollY;renderGen();window.scrollTo(0,y);toast('Recette « '+r[1]+' »')}return}
+  if(d.gp){const p=people().find(x=>x.id===d.gp);if(!p)return;if(p.on&&act().length===1&&act()[0]===p){toast('Au moins un participant');return}p.on=!p.on;persist();genS=null;renderGen();return}
   if(d.fam){const f=d.fam;let F=gen.fams.filter(x=>x!=='souplesse');
     if(f==='souplesse')F=gen.fams.includes('souplesse')?['kite']:['souplesse'];
     else if(F.includes(f)){F=F.filter(x=>x!==f);if(!F.length)F=[f]}
@@ -1298,7 +1400,7 @@ $('v-gen').addEventListener('click',e=>{
   if(d.yo){gen.yoga=!gen.yoga;genS=null;renderGen();return}
   const a=d.a;
   if(a==='prof')openProf();
-  if(a==='gen'){genS=generate(gen.fams,gen.dur,gen.lv,gen.yoga);renderGen();const h=$('v-gen').querySelector('h2');if(h)h.scrollIntoView({behavior:'smooth'})}
+  if(a==='gen'){genS=gen.mode==='mix'?generate(null,gen.dur,gen.lv,gen.yoga,{...cfg().mix}):generate(gen.fams,gen.dur,gen.lv,gen.yoga);renderGen();const h=$('v-gen').querySelector('h2');if(h)h.scrollIntoView({behavior:'smooth'})}
   if(!genS)return;
   if(a==='play')openPlayer(genS);
   if(a==='fit')exportSession(genS);
@@ -1362,7 +1464,7 @@ function renderProf(){
   ${people().map(personHtml).join('')}
   ${people().length<8?'<button class="add" data-pf="add">+ Ajouter une personne</button>':''}
   <h2>Matériel disponible</h2>
-  <div class="chips"><button class="chip" data-mat="elastique" aria-pressed="${c.mat.elastique}">Élastiques</button><button class="chip" data-mat="halteres" aria-pressed="${c.mat.halteres}">Haltères légers</button><button class="chip" data-mat="chaise" aria-pressed="${c.mat.chaise}">Chaise / banc / marche</button></div>
+  <div class="chips"><button class="chip" data-mat="elastique" aria-pressed="${c.mat.elastique}">Élastiques</button><button class="chip" data-mat="halteres" aria-pressed="${c.mat.halteres}">Haltères légers</button><button class="chip" data-mat="chaise" aria-pressed="${c.mat.chaise}">Chaise / banc / marche</button><button class="chip" data-mat="barre" aria-pressed="${c.mat.barre}">Barre de traction</button></div>
   <h2>Objectif</h2>
   <div class="chips"><button class="chip" data-kite="1" aria-pressed="${c.kite}">Priorité kite / pumping</button></div>
   <h2>Course (${esc(people()[0].n)})</h2>
