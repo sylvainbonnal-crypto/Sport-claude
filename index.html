@@ -185,9 +185,10 @@ ol.steps{padding-left:20px;margin-top:8px}ol.steps li{margin:6px 0}
 .ptime{font:800 clamp(76px,26vw,110px)/1 "Barlow Condensed",sans-serif;text-align:center;color:var(--acc);font-variant-numeric:tabular-nums}
 .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
 .pnext{text-align:center;color:var(--mut)}.pnext b{color:var(--ink)}
-.pnrow{display:flex;align-items:center;justify-content:center;gap:12px}
-.pnrow .pnext{text-align:left}
-.pnfig{flex:none;width:96px;height:78px;border-radius:14px;background:var(--card);border:1px solid var(--line);color:var(--mut)}
+.pnrow{display:flex;align-items:center;justify-content:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px}
+.pnrow .pnext{text-align:left;font-size:18px;line-height:1.25;flex:1}
+.pnrow .pnext b{display:block;font:800 24px/1.1 "Barlow Condensed",sans-serif}
+.pnfig{flex:none;width:46%;max-width:220px;aspect-ratio:1/.8;border-radius:14px;background:var(--bg);border:1px solid var(--line);color:var(--mut)}
 .pnfig svg{width:100%;height:100%;display:block}
 .pnrow.end .pnfig{display:none}.pnrow.end .pnext{text-align:center}
 .ctl{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:auto;padding-top:6px}
@@ -223,6 +224,49 @@ input[type=range]{width:100%;height:36px;accent-color:var(--sport);touch-action:
 .diag b{color:#ff9b9b;font-weight:600}.diag .ok{color:#8fd694}
 .hid{display:none!important}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
+/* ---- lecteur v5 : tout tient dans l'écran ---- */
+#p-run{max-width:none;height:100vh;height:100dvh;min-height:0;overflow:hidden;gap:8px;padding:10px 16px 12px}
+.pstat{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px}
+.pst{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 10px;line-height:1.15}
+.pst small{display:block;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.pst b{font:800 24px/1.1 "Barlow Condensed",sans-serif;font-variant-numeric:tabular-nums}
+.pst span{display:block;color:var(--mut);font-size:13px}
+.segs{display:flex;gap:3px;height:22px}
+.seg{position:relative;flex:1 1 0;min-width:6px;background:var(--line);border-radius:5px;overflow:hidden}
+.seg i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--rest);opacity:.55}
+.seg.cur{outline:2px solid var(--acc);outline-offset:1px}.seg.cur i{background:var(--acc);opacity:.9}
+.seg.done i{width:100%!important}
+.seg span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 12px Barlow,sans-serif;color:var(--ink);white-space:nowrap;overflow:hidden}
+.dots{display:inline-flex;gap:4px;vertical-align:middle;margin-left:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line);display:inline-block}
+.dots i.d{background:var(--mut)}.dots i.c{background:var(--acc);box-shadow:0 0 0 2px #fff3}
+.pmain{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+.pmain>.pfig{flex:1 1 auto;min-height:120px;aspect-ratio:auto}
+.pinfo{flex:none;display:flex;flex-direction:column;gap:6px;min-height:0}
+#p-run .ptime{font-size:clamp(54px,9vh,96px)}
+#p-run .pname{font-size:clamp(24px,3.6vh,34px)}
+#p-run .pnfig{width:auto;height:min(15vh,150px);aspect-ratio:1/.8;max-width:none}
+#p-run .ctl{margin-top:0;padding-top:0}
+#p-run .cb{width:56px;height:56px}#p-run .cb.main{width:74px;height:74px}
+.pbot{flex-wrap:wrap}
+@media (orientation:landscape){
+  .pmain{flex-direction:row;gap:20px}
+  .pmain>.pfig{flex:1.3 1 0;height:100%}
+  .pinfo{flex:1 1 0;justify-content:center}
+  #p-run .ptime{font-size:min(15vh,120px)}
+  #p-run .pnfig{height:min(22vh,190px)}
+  #p-run .pcue{min-height:0}
+}
+@media (orientation:landscape) and (max-height:560px){.pstat .pst span{display:none}.segs{height:16px}#p-run .pnfig{height:18vh}}
+/* échanger un exercice */
+.plan .swb{flex:none;width:40px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:17px;margin-left:6px}
+.plan .pr{display:flex;align-items:center;gap:6px}
+.plan .pr>span:first-child{flex:1}
+.plan div.swp{display:block;padding:8px 0 10px}
+.swp p{font-size:13px;color:var(--mut);margin-bottom:6px}
+.swp .chips{margin:0}
+.swp .chip{min-height:38px}
+.plan .swp div{border-bottom:none;padding:0;justify-content:flex-start;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -324,22 +368,31 @@ input[type=range]{width:100%;height:36px;accent-color:var(--sport);touch-action:
     <button class="b go wide" id="p-go">Démarrer</button>
   </div>
   <div class="pl hid" id="p-run">
-    <div class="ptop"><button class="b" id="p-quit">Quitter</button><span class="phase" id="p-phase"></span><span id="p-left"></span></div>
-    <div class="prog"><i id="p-prog"></i></div>
-    <div class="hrrow" id="p-hr"></div>
-    <div class="pfig"><svg id="p-fig" aria-hidden="true"></svg></div>
-    <div class="pname" id="p-name"></div>
-    <div class="pvar" id="p-var"></div>
-    <div class="pcue" id="p-cue"></div>
-    <div class="ptime" id="p-time">0:00</div>
-    <div class="bar"><i id="p-bar"></i></div>
-    <div class="pnrow" id="p-nrow"><div class="pnfig" id="p-nfigw"><svg id="p-nfig" aria-hidden="true"></svg></div><div class="pnext" id="p-next"></div></div>
-    <div class="ctl">
-      <button class="cb" id="p-prev" aria-label="Précédent"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
-      <button class="cb main" id="p-play" aria-label="Pause ou reprise"><svg viewBox="0 0 24 24" id="p-icon"><path d="M8 5v14l11-7z"/></svg></button>
-      <button class="cb" id="p-skip" aria-label="Suivant"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+    <div class="ptop"><button class="b" id="p-quit">Quitter</button><span class="phase" id="p-phase"></span><button class="chip" id="p-sound">Son : oui</button></div>
+    <div class="pstat">
+      <div class="pst"><small>Bloc en cours</small><b id="p-blk"></b><span id="p-blkn"></span></div>
+      <div class="pst"><small>Reste du bloc</small><b id="p-blkleft">0:00</b></div>
+      <div class="pst"><small>Reste total</small><b id="p-left">0:00</b></div>
     </div>
-    <div class="ptop"><span>Douleur = stop, passe à la suite.</span><button class="chip" id="p-sound">Son : oui</button></div>
+    <div class="segs" id="p-segs"></div>
+    <div class="pmain">
+      <div class="pfig"><svg id="p-fig" aria-hidden="true"></svg></div>
+      <div class="pinfo">
+        <div class="hrrow" id="p-hr"></div>
+        <div class="pname" id="p-name"></div>
+        <div class="pvar" id="p-var"></div>
+        <div class="pcue" id="p-cue"></div>
+        <div class="ptime" id="p-time">0:00</div>
+        <div class="bar"><i id="p-bar"></i></div>
+        <div class="pnrow" id="p-nrow"><div class="pnfig" id="p-nfigw"><svg id="p-nfig" aria-hidden="true"></svg></div><div class="pnext" id="p-next"></div></div>
+        <div class="ctl">
+          <button class="cb" id="p-prev" aria-label="Précédent"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+          <button class="cb main" id="p-play" aria-label="Pause ou reprise"><svg viewBox="0 0 24 24" id="p-icon"><path d="M8 5v14l11-7z"/></svg></button>
+          <button class="cb" id="p-skip" aria-label="Suivant"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="ptop pbot"><span>Douleur = stop, passe à la suite.</span></div>
   </div>
   <div class="pl hid" id="p-end">
     <h1 style="text-align:center;margin-top:20px">Bravo, séance terminée</h1>
@@ -458,7 +511,6 @@ const LIB=[
  {k:'situp',n:'Sit-ups',cat:'abdos',cue:'Bras croisés sur la poitrine',per:2400,f:[L({le:[62,162],lh:[72,158],re:[62,164],rh:[72,160],lk:[128,142],lf:[150,178],rk:[130,144],rf:[152,178]}),{h:[76,100],n:[82,116],p:[103,170],le:[96,132],lh:[104,124],re:[96,134],rh:[104,126],lk:[128,142],lf:[150,178],rk:[130,144],rf:[152,178]}]},
  {k:'flutter',n:'Battements de jambes',cat:'abdos',cue:'Bas du dos collé au sol',per:700,f:[L({le:[72,174],lh:[95,176],re:[72,175],rh:[95,177],lk:[135,158],lf:[166,148],rk:[136,166],rf:[168,163]}),L({le:[72,174],lh:[95,176],re:[72,175],rh:[95,177],lk:[136,166],lf:[168,163],rk:[135,158],rf:[166,148]})]},
  {k:'scissors',n:'Ciseaux',cat:'abdos',cue:'Jambes tendues, grands mouvements',per:1400,f:[L({rk:[134,154],rf:[164,138],lk:[137,166],lf:[170,162]}),L({lk:[134,154],lf:[164,138],rk:[137,166],rf:[170,162]})]},
- {k:'deadbug',n:'Dead bug',cat:'abdos',cue:'Lent et contrôlé',per:2400,f:[L({le:[50,140],lh:[52,112],re:[54,140],rh:[56,112],lk:[104,135],lf:[136,135],rk:[106,136],rf:[138,136]}),L({le:[24,160],lh:[2,158],re:[54,140],rh:[56,112],lk:[104,135],lf:[136,135],rk:[134,160],rf:[166,166]})]},
  {k:'hollowrock',n:'Hollow rocks',cat:'abdos',cue:'Corps en banane, bascule doucement',per:1400,f:[HH,{h:[38,136],n:[52,146],p:[102,174],le:[28,140],lh:[4,134],re:[29,141],rh:[5,135],lk:[136,170],lf:[170,166],rk:[136,171],rf:[170,167]}]},
  {k:'russian',n:'Russian twists',cat:'abdos',cue:'Mains jointes, sans poids',per:2400,f:[RT,mir(RT)]},
  {k:'reversecrunch',n:'Crunchs inversés',cat:'abdos',cue:'Genoux vers la poitrine, bassin décolle',per:2400,f:[L({lk:[110,137],lf:[144,137],rk:[112,138],rf:[146,138]}),L({p:[96,162],lk:[84,130],lf:[116,116],rk:[86,131],rf:[118,117]})]},
@@ -700,9 +752,10 @@ breath:'T|res||Couché genoux pliés : inspire par le ventre 4 s, expire 6 s. D�
 const ORD=['cardio','puissance','jambes','abdos','haut','pilates','yoga','etirement'];
 LIB.sort((a,b)=>ORD.indexOf(a.cat)-ORD.indexOf(b.cat));
 const LV={squathop:1,bandlunge:2,stepup:2,superman:1,birddog:1,jacks:1,march:1,skaters:2,highknees:2,buttkicks:1,lateralhops:2,jumpsquat:2,jumplunge:3,tuckjump:3,broadjump:3,singlehop:3,squat:1,reverselunge:1,bridge:1,sldl:2,cossack:3,bandsquat:1,lateralwalk:1,monsterwalk:1,clamshell:1,squatpulse:2,squathold:2,calfraise:1,situp:1,flutter:1,scissors:1,deadbug:1,hollowrock:2,russian:1,reversecrunch:2,bicycle:3,toetouches:2,heeltouches:1,plank:2,legraise:2,vup:3,hollowhold:2,sideplank:2,hamstring:2,quad:1,lunge:2,pigeon:3,butterfly:2,calf:1,twist:1,child:1,pelvictilt:1,standham:1,standhipflex:1,figure4:1,sidelungestretch:2,openbook:1};
-const KITE0=['squatpulse','squathold','singlehop','sldl','broadjump','hollowhold','sideplank','superman','deadbug','cossack','lateralwalk','warrior2','balance','boat','curtsy'];
+const KITE0=['squatpulse','squathold','singlehop','sldl','broadjump','hollowhold','sideplank','superman','cossack','lateralwalk','warrior2','balance','boat','curtsy'];
 const EX={};
-LIB.forEach((x,i)=>{x.no=i+1;x.mat=x.mat||'aucun';x.lv=x.lv||LV[x.k]||1;if(KITE0.includes(x.k))x.kite=1;
+const PRONE=new Set(['plank','highplank','pushup','kneepushup','superman','swimming','cobra','sphinx','birddog','bearplank','catcow','kickback','yraise','mountainclimb','shouldertap','legpull','downdog','inchworm','burpee','copenhagen','sideplank']);
+LIB.forEach((x,i)=>{x.prone=PRONE.has(x.k);x.no=i+1;x.mat=x.mat||'aucun';x.lv=x.lv||LV[x.k]||1;if(KITE0.includes(x.k))x.kite=1;
   const m=(x.m||META[x.k]||'X|for||').split('|');x.z=m[0].split('').filter(Boolean);x.ty=m[1]||'for';x.r=(m[2]||'').split('').filter(Boolean);
   if(!x.d&&m.length>3)x.d=m.slice(3).join('|');EX[x.k]=x});
 const LVN=['','Facile','Moyen','Difficile'];
@@ -735,7 +788,7 @@ const TYS=['cardio','gainage','puissance','pumping','mixte','souplesse','pilates
 function clean(s){
   if(!s||typeof s!=='object'||!s.blocks)return null;
   const n=(v,d,a,b)=>{v=Number(v);return isFinite(v)?Math.min(b,Math.max(a,Math.round(v))):d};
-  const bl=a=>(Array.isArray(a)?a:[]).map(x=>x&&x.ex==='catcow0'?{...x,ex:'pelvictilt'}:x&&x.ex==='child'?{...x,ex:'forwardfold'}:x).filter(x=>x&&EX[x.ex]&&x.ex!=='rest').map(x=>({ex:x.ex,sec:n(x.sec,30,5,900),sides:!!x.sides,tempo:[0,1.5,2,3,4].includes(+x.tempo)?+x.tempo:0}));
+  const bl=a=>(Array.isArray(a)?a:[]).map(x=>x&&x.ex==='catcow0'?{...x,ex:'pelvictilt'}:x&&x.ex==='child'?{...x,ex:'forwardfold'}:x&&x.ex==='deadbug'?{...x,ex:'toetaps'}:x).filter(x=>x&&EX[x.ex]&&x.ex!=='rest').map(x=>({ex:x.ex,sec:n(x.sec,30,5,900),sides:!!x.sides,tempo:[0,1.5,2,3,4].includes(+x.tempo)?+x.tempo:0}));
   return {id:String(s.id||'u'+Date.now()).slice(0,40),name:String(s.name||'Séance').slice(0,60),ty:TYS.includes(s.ty)?s.ty:'mixte',desc:s.desc?String(s.desc).slice(0,300):'',rounds:n(s.rounds,4,1,10),pause:n(s.pause,5,0,60),roundRest:n(s.roundRest,20,0,180),
     blocks:{warmup:bl(s.blocks.warmup),main:bl(s.blocks.main),cooldown:bl(s.blocks.cooldown),stretch:bl(s.blocks.stretch)}};
 }
@@ -774,8 +827,8 @@ function status(X,p){
   return pr?{s:'pr',why:pr}:{s:'ok'};
 }
 const ALT={jumpsquat:'squat',jumplunge:'reverselunge',tuckjump:'squathold',broadjump:'squat',singlehop:'squatpulse',skaters:'curtsy',squathop:'squatpulse',jacks:'march',highknees:'march',buttkicks:'march',lateralhops:'calfraise',jumprope:'march',pogo:'calfraise',lateralbound:'curtsy',boxjump:'stepup',burpee:'squat',starjump:'squat',squatjacks:'sumosquat',shuffle:'march',
-  rowband:'pullapart',straightpull:'pullapart',woodchop:'pallof',goblet:'dbsquat',mountainclimb:'deadbug',pushup:'kneepushup',shouldertap:'plank',highplank:'plank',bearplank:'deadbug',birddog:'deadbug',downdog:'standham',catcow:'pelvictilt',cobra:'sphinx',legpull:'plank',inchworm:'standham',kickback:'bridge',copenhagen:'sideplank',
-  warrior1:'warrior2',ohpress:'lateralraise',yraise:'pullapart',mountain:'breath',chairyoga:'squathold',goddess:'sumosquat',crescent:'lunge',overheadtri:'crossbody',situp:'deadbug',legraise:'reversecrunch',vup:'hollowhold',superman:'birddog',swimming:'deadbug',teaser:'boat',bulgarian:'reverselunge',cossack:'sidelungestretch',pigeon:'figure4',deepsquat:'butterfly',worlds:'lunge',kneepushup:'plank'};
+  rowband:'pullapart',straightpull:'pullapart',woodchop:'pallof',goblet:'dbsquat',mountainclimb:'toetaps',pushup:'kneepushup',shouldertap:'plank',highplank:'plank',bearplank:'toetaps',birddog:'toetaps',downdog:'standham',catcow:'pelvictilt',cobra:'sphinx',legpull:'plank',inchworm:'standham',kickback:'bridge',copenhagen:'sideplank',
+  warrior1:'warrior2',ohpress:'lateralraise',yraise:'pullapart',mountain:'breath',chairyoga:'squathold',goddess:'sumosquat',crescent:'lunge',overheadtri:'crossbody',situp:'toetaps',legraise:'reversecrunch',vup:'hollowhold',superman:'birddog',swimming:'toetaps',teaser:'boat',bulgarian:'reverselunge',cossack:'sidelungestretch',pigeon:'figure4',deepsquat:'butterfly',worlds:'lunge',kneepushup:'plank'};
 const GRP=c=>['cardio','puissance','jambes'].includes(c)?'L':['abdos','pilates'].includes(c)?'T':['yoga','etirement'].includes(c)?'S':c;
 function variantFor(k,p,noLv){
   const X=EX[k];if(!X||k==='rest'||!p)return null;
@@ -818,15 +871,15 @@ const PRESETS=[
   mkPreset('p0','Séance de base','mixte','Ta séance de départ : jambes et abdos, sans charge sur les bras.',[it('squat',40),it('bicycle',40),it('reverselunge',40),it('legraise',30),it('bridge',40),it('hollowhold',30)]),
   mkPreset('pPil','Pilates – tronc solide','pilates','Gainage profond, contrôle du bassin et respiration : la base d’un pumping propre.',[it('hundred',40),it('toetaps',40),it('singleleg',40),it('legcircle',30,{s:1}),it('sidelegs',30,{s:1}),it('swimming',30),it('pilbridge',45)],{rounds:2,pause:10,roundRest:30}),
   mkPreset('pYoga','Yoga – force et souplesse','yoga','Postures debout tenues, ouverture des hanches, fin au calme. Parfait les jours sans vent.',[it('mountain',40),it('warrior2',40,{s:1}),it('triangle',40,{s:1}),it('chairyoga',40),it('tree',30,{s:1}),it('crescent',40,{s:1}),it('sphinx',45)],{rounds:2,pause:5,roundRest:20,blocks:{warmup:[it('march',60),it('catcow',45),it('hipcircle',40)],main:[it('mountain',40),it('warrior2',40,{s:1}),it('triangle',40,{s:1}),it('chairyoga',40),it('tree',30,{s:1}),it('crescent',40,{s:1}),it('sphinx',45)],cooldown:[],stretch:[it('pigeon',45,{s:1}),it('twist',40,{s:1}),it('forwardfold',45),it('savasana',90)]}}),
-  mkPreset('pAnkle','Cheville – retour d’entorse','mixte','Renfo et équilibre progressifs de la cheville, sans saut. Arrête si la cheville fait mal.',[it('toewalk',30),it('calfraise',40),it('balance',30,{s:1}),it('sumosquat',40),it('bridge',40),it('deadbug',40)],{rounds:3,pause:10,roundRest:30,blocks:{warmup:[it('march',60),it('anklealpha',40,{s:1}),it('hipcircle',40)],main:[it('toewalk',30),it('calfraise',40),it('balance',30,{s:1}),it('sumosquat',40),it('bridge',40),it('deadbug',40)],cooldown:[],stretch:[it('calf',30,{s:1}),it('ankle',30,{s:1}),it('standham',40,{s:1}),it('forwardfold',45)]}}),
+  mkPreset('pAnkle','Cheville – retour d’entorse','mixte','Renfo et équilibre progressifs de la cheville, sans saut. Arrête si la cheville fait mal.',[it('toewalk',30),it('calfraise',40),it('balance',30,{s:1}),it('sumosquat',40),it('bridge',40),it('toetaps',40)],{rounds:3,pause:10,roundRest:30,blocks:{warmup:[it('march',60),it('anklealpha',40,{s:1}),it('hipcircle',40)],main:[it('toewalk',30),it('calfraise',40),it('balance',30,{s:1}),it('sumosquat',40),it('bridge',40),it('toetaps',40)],cooldown:[],stretch:[it('calf',30,{s:1}),it('ankle',30,{s:1}),it('standham',40,{s:1}),it('forwardfold',45)]}}),
   mkPreset('pCardio','Cardio','cardio','Souffle et endurance : on enchaîne, peu de pause.',[it('highknees',40),it('skaters',40),it('jumpsquat',30),it('buttkicks',40),it('squathop',30),it('lateralhops',30),it('squatpulse',40)],{pause:10,roundRest:40}),
   mkPreset('pPower','Puissance','puissance','Sauts explosifs et jambes solides. Qualité avant vitesse, récup longue.',[it('broadjump',20),it('tuckjump',20),it('singlehop',15,{s:1}),it('jumplunge',30),it('squathold',45),it('bicycle',40)],{pause:20,roundRest:60}),
-  mkPreset('pKite','Gainage kite','gainage','Gainage sans tirer avec les bras : tronc solide pour encaisser la traction.',[it('hollowhold',30),it('sideplank',20,{s:1}),it('deadbug',40),it('superman',30),it('birddog',20,{s:1}),it('bicycle',40)],{pause:10,roundRest:30}),
+  mkPreset('pKite','Gainage kite','gainage','Gainage sans tirer avec les bras : tronc solide pour encaisser la traction.',[it('hollowhold',30),it('sideplank',20,{s:1}),it('toetaps',40),it('superman',30),it('birddog',20,{s:1}),it('bicycle',40)],{pause:10,roundRest:30}),
   mkPreset('pShould','Épaules kite (élastique)','gainage','Épaules et dos sans tirage ni rotation du poignet : prépare la tenue du wing.',[it('pullapart',40),it('extrot',30),it('yraise',30),it('pallof',20,{s:1}),it('sideplank',20,{s:1})],{pause:10,roundRest:30}),
   mkPreset('pS','Étirements – souplesse','souplesse','Postures tenues 60 s avec contracté-relâché. Les jours off ou après le kite.',[],{rounds:1,blocks:{warmup:[it('march',90),it('hipcircle',40)],main:[],cooldown:[],stretch:[it('lunge',60,{s:1}),it('standham',60,{s:1}),it('quad',60,{s:1}),it('pigeon',60,{s:1}),it('figure4',60,{s:1}),it('sidelungestretch',60,{s:1}),it('deepsquat',45),it('ninety',45,{s:1}),it('calf',45,{s:1}),it('twist',45,{s:1}),it('breath',60)]}})
 ];
 /* Séances montre : fixes, 20/30/40 min, facile/dur */
-const FITM={1:[it('squat',40),it('deadbug',40),it('reverselunge',40),it('heeltouches',30),it('bridge',40),it('plank',30),it('calfraise',30)],
+const FITM={1:[it('squat',40),it('toetaps',40),it('reverselunge',40),it('heeltouches',30),it('bridge',40),it('plank',30),it('calfraise',30)],
             3:[it('squathop',30),it('hollowrock',30),it('jumplunge',30),it('sideplank',20,{s:1}),it('skaters',40),it('vup',30),it('tuckjump',20),it('mountainclimb',30)]};
 const FITST={20:[it('lunge',40,{s:1}),it('standham',40,{s:1}),it('forwardfold',45)],30:[it('lunge',40,{s:1}),it('standham',40,{s:1}),it('quad',40,{s:1}),it('twist',40,{s:1}),it('forwardfold',45)],40:[it('lunge',40,{s:1}),it('standham',40,{s:1}),it('quad',40,{s:1}),it('pigeon',45,{s:1}),it('calf',30,{s:1}),it('twist',40,{s:1}),it('forwardfold',45)]};
 const stepsN=x=>x.sides?2:1,tsum=a=>a.reduce((s,x)=>s+x.sec*stepsN(x),0);
@@ -861,7 +914,7 @@ function buildPlan(s,mode){
   out.forEach((p,i)=>{if(p.pause){const nx=out[i+1]||{};p.ex=nx.ex||'rest';p.flip=nx.flip}});
   const isEx=p=>p&&!p.pause&&!p.prep&&p.ex!=='rest';
   for(let i=out.length-1;i>0;i--){const a=out[i-1],b=out[i];
-    if(isEx(a)&&isEx(b)&&!(b.sideB&&a.ex===b.ex))out.splice(i,0,{name:b.name,sec:PREP,ex:b.ex,flip:b.flip,phase:'En place',kind:'rest',prep:true,cue:'Mets-toi en position',vars:b.vars})}
+    if(isEx(a)&&isEx(b)&&!(b.sideB&&a.ex===b.ex))out.splice(i,0,{name:b.name,sec:PREP,ex:b.ex,flip:b.flip,phase:b.phase,kind:'rest',prep:true,cue:'Mets-toi en position',vars:b.vars})}
   return out;
 }
 const total=s=>buildPlan(s).reduce((a,p)=>a+p.sec,0);
@@ -982,11 +1035,16 @@ function makeFig(svg){
   const g=mk('g',{},svg);
   const st={'stroke-linecap':'round','stroke-linejoin':'round',fill:'none'};
   const bn=mk('line',{stroke:'#e8d44d','stroke-width':3,'stroke-linecap':'round'},g);
-  const far=mk('g',{...st,stroke:'#6b7487','stroke-width':7},g);
-  const near=mk('g',{...st,stroke:'currentColor','stroke-width':8},g);
+  const far=mk('g',{...st,stroke:'#6b7487','stroke-width':10},g);
+  const near=mk('g',{...st,stroke:'currentColor','stroke-width':11},g);
   const fa=mk('polyline',{},far),fl=mk('polyline',{},far);
   const bd=mk('polyline',{},near),nl=mk('polyline',{},near),na=mk('polyline',{},near);
-  const hd=mk('circle',{r:11,fill:'currentColor'},g);
+  const fh=mk('circle',{r:5.5,fill:'#6b7487'},g),ff=mk('line',{stroke:'#6b7487','stroke-width':8,'stroke-linecap':'round'},g);
+  const nh=mk('circle',{r:6,fill:'currentColor'},g),nf=mk('line',{stroke:'currentColor','stroke-width':9,'stroke-linecap':'round'},g);
+  const hd=mk('circle',{r:13,fill:'currentColor'},g);
+  const nose=mk('polygon',{fill:'currentColor'},g);
+  const DK='#0f1216',e1=mk('circle',{r:2.2,fill:DK},g),e2=mk('circle',{r:2.2,fill:DK},g);
+  const mo=mk('path',{fill:'none',stroke:DK,'stroke-width':1.8,'stroke-linecap':'round'},g),nl2=mk('line',{stroke:DK,'stroke-width':1.6,'stroke-linecap':'round'},g);
   const d1=mk('line',{stroke:'#c9ced8','stroke-width':6,'stroke-linecap':'round'},g),d2=mk('line',{stroke:'#c9ced8','stroke-width':6,'stroke-linecap':'round'},g);
   const pts=a=>a.map(v=>v[0].toFixed(1)+','+v[1].toFixed(1)).join(' ');
   const ln=(e,a,b)=>{e.setAttribute('x1',a[0]);e.setAttribute('y1',a[1]);e.setAttribute('x2',b[0]);e.setAttribute('y2',b[1]);e.style.display=''};
@@ -995,6 +1053,29 @@ function makeFig(svg){
     fa.setAttribute('points',pts([q.n,q.le,q.lh]));fl.setAttribute('points',pts([q.p,q.lk,q.lf]));
     bd.setAttribute('points',pts([q.n,q.m,q.p]));nl.setAttribute('points',pts([q.p,q.rk,q.rf]));na.setAttribute('points',pts([q.n,q.re,q.rh]));
     hd.setAttribute('cx',q.h[0]);hd.setAttribute('cy',q.h[1]);
+    /* mains */
+    fh.setAttribute('cx',q.lh[0]);fh.setAttribute('cy',q.lh[1]);nh.setAttribute('cx',q.rh[0]);nh.setAttribute('cy',q.rh[1]);
+    const front=Math.abs(q.lk[0]-q.rk[0])>=9&&Math.abs((q.lk[0]+q.rk[0])/2-q.p[0])<6&&Math.abs(q.le[0]-q.re[0])>=14&&Math.abs((q.le[0]+q.re[0])/2-q.n[0])<6;
+    const horiz=Math.abs(q.n[1]-q.p[1])<32,prone=!!X.prone&&horiz;
+    /* pieds : perpendiculaires au tibia, vers l'avant */
+    const foot=(el,k,f)=>{if(front){const sd=f[0]<q.p[0]?-1:1;ln(el,[f[0]-1*sd,f[1]],[f[0]+7*sd,f[1]]);return}
+      let vx=f[0]-k[0],vy=f[1]-k[1];const L=Math.hypot(vx,vy)||1;vx/=L;vy/=L;if(f[1]>168&&!prone&&Math.abs(vy)>.6){ln(el,f,[f[0]+9,f[1]]);return}let tx=vy,ty=-vx;if(prone){tx=-tx;ty=-ty}ln(el,f,[f[0]+tx*9,f[1]+ty*9])};
+    foot(ff,q.lk,q.lf);foot(nf,q.rk,q.rf);
+    /* visage */
+    const h=q.h;let ux=h[0]-q.n[0],uy=h[1]-q.n[1];const ul=Math.hypot(ux,uy)||1;ux/=ul;uy/=ul;
+    if(front){const lx=uy*-1,ly=ux;/* latéral */
+      const ex=(s)=>[h[0]+s*5*(-uy)+ux*2,h[1]+s*5*ux+uy*2];
+      const a=ex(-1),b=ex(1);e1.setAttribute('cx',a[0]);e1.setAttribute('cy',a[1]);e2.setAttribute('cx',b[0]);e2.setAttribute('cy',b[1]);e2.style.display='';
+      nose.setAttribute('points','');ln(nl2,[h[0]+ux*1,h[1]+uy*1],[h[0]-ux*3,h[1]-uy*3]);
+      const m1=[h[0]-ux*6.5-uy*-4,h[1]-uy*6.5-ux*4],m2=[h[0]-ux*6.5+uy*-4,h[1]-uy*6.5+ux*4],mc=[h[0]-ux*9,h[1]-uy*9];
+      mo.setAttribute('d',`M${m1[0].toFixed(1)} ${m1[1].toFixed(1)}Q${mc[0].toFixed(1)} ${mc[1].toFixed(1)} ${m2[0].toFixed(1)} ${m2[1].toFixed(1)}`);
+    }else{
+      let fx=-uy,fy=ux;if(prone){fx=-fx;fy=-fy}
+      const P=(a,b)=>[h[0]+fx*a+ux*b,h[1]+fy*a+uy*b],pt=v=>v[0].toFixed(1)+','+v[1].toFixed(1);
+      const e=P(6,3);e1.setAttribute('cx',e[0]);e1.setAttribute('cy',e[1]);e2.style.display='none';
+      nose.setAttribute('points',[P(11,3),P(17,-1),P(11,-3)].map(pt).join(' '));nl2.style.display='none';
+      const m1=P(9,-6.5),m2=P(4,-7.5);mo.setAttribute('d',`M${pt(m1).replace(',',' ')}L${pt(m2).replace(',',' ')}`);
+    }
     if(X.band===1)ln(bn,lerp(q.p,q.lk,.72),lerp(q.p,q.rk,.72));
     else if(X.band==='hh')ln(bn,q.lh,q.rh);
     else if(Array.isArray(X.band))ln(bn,q.rh,X.band);
@@ -1363,13 +1444,23 @@ $('v-list').addEventListener('click',e=>{
 
 /* ---------- Générer ---------- */
 const gen={mode:'mix',fams:['kite'],dur:30,lv:2,yoga:false};let genS=null;
-function planHtml(s){
-  const row=x=>{const k=stepEx(x.ex),vs=varsFor(x.ex);return `<div><span style="color:var(--ink);white-space:normal">${EX[k].n}${x.sides?' (D + G)':''}${vs.length?`<em>${vs.map(v=>esc(varTxt(v))).join(' · ')}</em>`:''}</span><span>${(x.sides?'2 × ':'')+fsec(x.sec)}</span></div>`};
-  let h='';const B=s.blocks;
-  if(B.warmup.length)h+='<h3>Échauffement</h3>'+B.warmup.map(row).join('');
-  if(B.main.length)h+=`<h3>${s.rounds} tour${s.rounds>1?'s':''} · pause ${s.pause} s · repos ${s.roundRest} s</h3>`+B.main.map(row).join('');
-  if(B.cooldown.length)h+='<h3 class="r">Retour au calme</h3>'+B.cooldown.map(row).join('');
-  if(B.stretch.length)h+='<h3 class="e">Étirements</h3>'+B.stretch.map(row).join('');
+let swapOpen=null;
+function swapOptions(x,s){
+  const X=EX[x.ex];if(!X)return[];const inS=new Set(allItems(s).map(y=>y.ex));
+  return LIB.filter(Y=>Y.k!==X.k&&!inS.has(Y.k)&&Y.cat===X.cat&&!!Y.dyn===!!X.dyn&&eqOK(Y)&&act().every(p=>status(Y,p).s!=='no'))
+    .map(Y=>[Y,(Y.ty===X.ty?4:0)+2*Y.z.filter(z=>X.z.includes(z)).length-Math.abs(Y.lv-X.lv)+(cfg().kite&&Y.kite?1:0)+Math.random()*1.5])
+    .sort((a,b)=>b[1]-a[1]).slice(0,6).map(a=>a[0]);
+}
+function planHtml(s,swap){
+  const row=(x,b,i)=>{const k=stepEx(x.ex),vs=varsFor(x.ex),open=swap&&swapOpen&&swapOpen.b===b&&swapOpen.i===i;
+    let h=`<div class="pr"><span style="color:var(--ink);white-space:normal">${EX[k].n}${x.sides?' (D + G)':''}${vs.length?`<em>${vs.map(v=>esc(varTxt(v))).join(' · ')}</em>`:''}</span><span>${(x.sides?'2 × ':'')+fsec(x.sec)}</span>${swap?`<button class="swb" data-sw="${b}|${i}" aria-label="Échanger ${esc(EX[k].n)}" aria-expanded="${!!open}">⇄</button>`:''}</div>`;
+    if(open){const o=swapOptions(x,s);h+=`<div class="swp"><p>Remplacer par (même famille : ${esc(CATS[EX[x.ex].cat]||'')}) :</p><div class="chips">${o.length?o.map(Y=>`<button class="chip" data-swk="${Y.k}">${esc(Y.n)} <small style="opacity:.7">· ${LVN[Y.lv]}</small></button>`).join(''):'<span class="note">Aucune autre proposition compatible.</span>'}<button class="chip" data-swm="1">↻ Autres</button></div></div>`}
+    return h};
+  let h='';const B=s.blocks,list=(b)=>B[b].map((x,i)=>row(x,b,i)).join('');
+  if(B.warmup.length)h+='<h3>Échauffement</h3>'+(s._noSwapWarm?B.warmup.map(x=>row(x,'',0).replace(/<button class="swb"[^>]*>⇄<\/button>/,'')).join(''):list('warmup'));
+  if(B.main.length)h+=`<h3>${s.rounds} tour${s.rounds>1?'s':''} · pause ${s.pause} s · repos ${s.roundRest} s</h3>`+list('main');
+  if(B.cooldown.length)h+='<h3 class="r">Retour au calme</h3>'+list('cooldown');
+  if(B.stretch.length)h+='<h3 class="e">Étirements</h3>'+list('stretch');
   return h;
 }
 const MIXP=[['pump','Pumping kite',{J:70,B:5,T:25,car:25,pui:45,gai:30}],['equi','Équilibré',{J:40,B:25,T:35,car:33,pui:33,gai:34}],['cardio','Cardio',{J:55,B:15,T:30,car:65,pui:20,gai:15}],['tronc','Tronc solide',{J:20,B:20,T:60,car:15,pui:20,gai:65}],['jambes','Jambes force',{J:80,B:5,T:15,car:10,pui:65,gai:25}]];
@@ -1719,7 +1810,7 @@ const panel=n=>['start','run','end'].forEach(p=>$('p-'+p).classList.toggle('hid'
 let mode='all';
 function openPlayer(s){
   if(!buildPlan(s).length){toast('Ajoute au moins un exercice');return}
-  cur=s;const hasS=s.blocks.stretch.length>0,hasM=s.blocks.main.length>0;
+  swapOpen=null;cur=s;const hasS=s.blocks.stretch.length>0,hasM=s.blocks.main.length>0;
   mode=hasM?'all':'stretch';
   const opts=[];if(hasM&&hasS)opts.push(['all','Sport + étirements']);if(hasM)opts.push(['sport','Sport seul']);if(hasS)opts.push(['stretch','Étirements seuls']);
   $('p-mode').innerHTML=opts.length>1?opts.map(([v,l])=>`<button class="chip" data-v="${v}" aria-pressed="${v===mode}">${l}</button>`).join(''):'';
@@ -1729,12 +1820,24 @@ function openPlayer(s){
 }
 function renderStart(){
   const s=cur;PLAN=buildPlan(s,mode);TOTAL=PLAN.reduce((a,p)=>a+p.sec,0);
-  $('p-sub').textContent=fmin(TOTAL)+' · tout s’enchaîne seul, bip à chaque changement.';
+  $('p-sub').textContent=fmin(TOTAL)+' · tout s’enchaîne seul, bip à chaque changement. ⇄ pour échanger un exercice.';
   $('p-who').innerHTML=chips(people().map(p=>[p.id,esc(p.n)]),act().map(p=>p.id),'wp');
   $('p-warn').innerHTML=warnHtml(s);$('p-hrc').innerHTML=hrCard();
-  const view={...s,blocks:mode==='sport'?{...s.blocks,stretch:[]}:mode==='stretch'?{warmup:[it('march',90)],main:[],cooldown:[],stretch:s.blocks.stretch}:s.blocks};
-  $('p-plan').innerHTML=planHtml(view);
+  const view={...s,blocks:mode==='sport'?{...s.blocks,stretch:[]}:mode==='stretch'?{warmup:[it('march',90)],main:[],cooldown:[],stretch:s.blocks.stretch}:s.blocks,_noSwapWarm:mode==='stretch'};
+  $('p-plan').innerHTML=planHtml(view,true)+(cur._swapped?`<div style="display:block;border:none;padding:10px 0 4px"><button class="b sm" id="p-savesw">Enregistrer cette version dans Mes séances</button></div>`:'');
 }
+$('p-plan').addEventListener('click',e=>{
+  const b=e.target.closest('[data-sw],[data-swk],[data-swm],#p-savesw');if(!b)return;
+  if(b.id==='p-savesw'){const c=clean({...cur,id:store.sessions.some(x=>x.id===cur.id)?cur.id:'u'+Date.now(),name:/\(perso\)$/.test(cur.name)?cur.name:cur.name+' (perso)'});
+    const j=store.sessions.findIndex(x=>x.id===c.id);if(j>=0)store.sessions[j]=c;else store.sessions.push(c);cur={...c};persist();renderStart();toast('Enregistrée dans Mes séances');return}
+  if(b.dataset.sw){const [bl,i]=b.dataset.sw.split('|');swapOpen=swapOpen&&swapOpen.b===bl&&swapOpen.i===+i?null:{b:bl,i:+i};renderStart();return}
+  if(b.dataset.swm){renderStart();return}
+  if(b.dataset.swk&&swapOpen){
+    if(!cur._swapped){cur=JSON.parse(JSON.stringify(cur));cur._swapped=true;delete cur.preset}
+    const x=cur.blocks[swapOpen.b]&&cur.blocks[swapOpen.b][swapOpen.i];if(!x)return;const Y=EX[b.dataset.swk],old=EX[x.ex].n;
+    x.ex=Y.k;if(Y.side&&!x.sides){x.sides=true;x.sec=Math.max(15,Math.round(x.sec*.75/5)*5)}else if(!Y.side&&x.sides){x.sides=false}
+    swapOpen=null;renderStart();toast(old+' → '+Y.n)}
+});
 $('p-who').onclick=e=>{const b=e.target.closest('[data-wp]');if(!b)return;const p=people().find(x=>x.id===b.dataset.wp);if(!p)return;
   if(p.on&&act().length===1){toast('Au moins un participant');return}p.on=!p.on;persist();renderStart()};
 $('p-mode').onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;mode=b.dataset.v;[...$('p-mode').children].forEach(c=>c.setAttribute('aria-pressed',c===b));renderStart()};
@@ -1773,17 +1876,38 @@ function showStep(){
   $('p-phase').textContent=s.phase;$('p-name').dataset.say=sayFor(idx);$('p-name').textContent=s.name;$('p-cue').textContent=s.cue||'';
   $('p-var').textContent=(s.vars||[]).map(varTxt).join(' · ');
   const up=upcoming(idx),prevUp=upK,prevTop=topK;
-  $('p-next').innerHTML=up?'Prochain : <b>'+esc(up.name||'')+'</b>'+((up.vars||[]).filter(v=>v.k).length?' <span style="color:#ffc46b">('+esc(up.vars.filter(v=>v.k).map(v=>v.p+' : '+EX[v.k].n).join(', '))+')</span>':''):'Dernier exercice';
+  $('p-next').innerHTML=up?'Prochain<b>'+esc(up.name||'')+'</b>'+((up.vars||[]).filter(v=>v.k).length?' <span style="color:#ffc46b">('+esc(up.vars.filter(v=>v.k).map(v=>v.p+' : '+EX[v.k].n).join(', '))+')</span>':''):'Dernier exercice';
   $('p-nrow').classList.toggle('end',!up);
   upK=up?up.ex:null;upFlip=up?!!up.flip:false;topK=s.ex;$('p-nfigw').style.color=up?COL[up.kind]:'';
   if(up)nfig.draw(upK,.25,upFlip);
   if(prevUp&&s.ex===prevUp&&s.ex!==prevTop)slideIn();
-  lastBeep=-1;lastBeat=0;t0=performance.now();
+  lastBeep=-1;lastBeat=0;t0=performance.now();updBlk();
 }
 const doneSec=()=>PLAN.slice(0,idx).reduce((a,x)=>a+x.sec,0)+el;
+let SEGS=[];
+const segLbl=p=>p==='Échauffement'?'Échauffement':p==='Retour au calme'?'Calme':p==='Étirements'?'Étirements':/^Tour (\d+)/.test(p)?'T'+p.match(/^Tour (\d+)/)[1]:p;
+const isExStep=p=>p&&!p.pause&&!p.prep&&p.ex!=='rest';
+function buildSegs(){SEGS=[];let t=0;
+  PLAN.forEach((p,i)=>{let g=SEGS[SEGS.length-1];if(!g||g.ph!==p.phase){g={ph:p.phase,i0:i,i1:i,t0:t,dur:0,ex:[]};SEGS.push(g)}
+    g.i1=i;g.dur+=p.sec;if(isExStep(p)&&!p.sideB)g.ex.push(i);t+=p.sec});
+  $('p-segs').innerHTML=SEGS.map((g,k)=>`<div class="seg" style="flex-grow:${Math.max(g.dur,20)}" data-s="${k}"><i></i><span>${esc(segLbl(g.ph))}</span></div>`).join('');
+}
+const segOf=i=>SEGS.findIndex(g=>i>=g.i0&&i<=g.i1);
 function update(){
   const s=PLAN[idx];$('p-time').textContent=fmt(s.sec-el);$('p-bar').style.width=Math.min(100,el/s.sec*100)+'%';
-  const done=doneSec();$('p-prog').style.width=(done/TOTAL*100)+'%';$('p-left').textContent=fmt(TOTAL-done);
+  const done=doneSec();$('p-left').textContent=fmt(TOTAL-done);
+  const k=segOf(idx),g=SEGS[k];if(!g)return;
+  $('p-blkleft').textContent=fmt(g.dur-(done-g.t0));
+  [...$('p-segs').children].forEach((d,j)=>{const G=SEGS[j];d.classList.toggle('cur',j===k);d.classList.toggle('done',j<k);
+    d.firstChild.style.width=j===k?Math.min(100,(done-G.t0)/G.dur*100)+'%':j<k?'100%':'0'});
+}
+function updBlk(){
+  const k=segOf(idx),g=SEGS[k];if(!g)return;
+  const ph=g.ph,m=/^Tour (\d+)\/(\d+)/.exec(ph);
+  $('p-blk').textContent=m?'Circuit · tour '+m[1]+' / '+m[2]:ph;
+  let cur=g.ex.findIndex(i=>i>=idx||(PLAN[i+1]&&PLAN[i+1].sideB&&i+1>=idx));if(cur<0)cur=g.ex.length-1;
+  const exN=g.ex.length;
+  $('p-blkn').innerHTML=exN?`Exercice ${Math.min(cur+1,exN)} / ${exN}<span class="dots">${g.ex.map((i,j)=>`<i class="${j<cur?'d':j===cur?'c':''}"></i>`).join('')}</span>`:'';
 }
 function goTo(i){if(i>=PLAN.length){finish();return}idx=Math.max(0,i);el=0;last=performance.now();showStep();update()}
 function setIcon(){$('p-icon').innerHTML=running?'<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>'}
@@ -1792,7 +1916,7 @@ function finish(){running=false;setIcon();releaseWake();beep(660,.2);setTimeout(
   logDone(mode==='stretch'?'souplesse':(cur.ty||'mixte'),cur.name,TOTAL,null,Object.keys(sums).length?sums:null);
   $('p-endtxt').textContent=cur.name+' · '+fmin(TOTAL)+'. Notée dans l’historique. Pense à bien t’hydrater.';
   $('p-hrsum').innerHTML=htm.length?'<h2>Fréquence cardiaque</h2>'+htm.join(''):'';panel('end')}
-function start(){upK=null;topK=null;panel('run');Object.values(HR).forEach(h=>h.rec=[]);goTo(0);running=true;last=performance.now();setIcon();keepAwake();beep(880,.05,.01);hrRender()}
+function start(){upK=null;topK=null;panel('run');buildSegs();Object.values(HR).forEach(h=>h.rec=[]);goTo(0);running=true;last=performance.now();setIcon();keepAwake();beep(880,.05,.01);hrRender()}
 $('p-go').onclick=start;
 $('p-back').onclick=closePlayer;$('p-close').onclick=closePlayer;
 $('p-play').onclick=()=>{running=!running;last=performance.now();setIcon();if(running){keepAwake();try{ac&&ac.resume()}catch(e){}}};
@@ -1842,77 +1966,34 @@ requestAnimationFrame(loop);
 
 <!-- ===================================================================
      MES SÉANCES v4 : annonces vocales, commande vocale, boutons musique
-     de la Garmin, télécommande Bluetooth, vidéo YouTube et mode TV.
+     télécommande Bluetooth, aide TV.
      =================================================================== -->
 <style>
-.pside{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
-.pside>.ptop:last-child{flex-wrap:wrap}
-.ytw{display:none;background:#000;border-radius:14px;overflow:hidden}
-.ytw iframe{width:100%;height:100%;border:0;display:block}
-.ytw{position:relative}
-.ytx{position:absolute;inset:0;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;text-align:center;color:#f2f4f7;font-size:14px}
-.ytx b{font:800 20px "Barlow Condensed",sans-serif}
-.ytx a.b{display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}
-#player.split .ytw{display:block;aspect-ratio:16/9;width:100%;flex:none}
-#player.split .pfig{aspect-ratio:auto;height:24vh}
-#player.split .ptime{font-size:clamp(56px,16vw,90px)}
-.xin{display:block;width:100%;min-height:48px;margin-top:6px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:0 12px;color:var(--ink);font-size:15px}
-.xok{color:#8fd694}.xko{color:#ff9b9b}
 #x-mic2[data-live="1"]{background:#1f3a2a;color:#8fd694;border-color:#2f5a3f}
 #x-tv{z-index:14}
-@media (orientation:landscape) and (min-width:760px){
-  #player:not(.split) #p-run{max-width:1150px;min-height:100vh}
-  #player:not(.split) .pside{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:28px;row-gap:8px;align-content:center;
-    grid-template-areas:"top top" "prog prog" "fig hr" "fig name" "fig var" "fig cue" "fig time" "fig bar" "fig next" "fig ctl" "bot bot"}
-  .pside>.ptop:first-child{grid-area:top}.pside>.prog{grid-area:prog}.pside>#p-hr{grid-area:hr}.pside>.pfig{grid-area:fig}
-  .pside>#p-name{grid-area:name}.pside>#p-var{grid-area:var}.pside>#p-cue{grid-area:cue}.pside>#p-time{grid-area:time}
-  .pside>.bar{grid-area:bar}.pside>.pnrow{grid-area:next}.pside>.ctl{grid-area:ctl}.pside>.ptop:last-child{grid-area:bot}
-  #player:not(.split) .pfig{aspect-ratio:auto;height:100%;min-height:0;max-height:72vh}
-  #player:not(.split) .ptime{font-size:min(20vh,140px)}
-  #player.split #p-run{max-width:none;flex-direction:row;align-items:stretch;height:100vh;padding:12px}
-  #player.split .ytw{aspect-ratio:auto;flex:1.7;height:auto}
-  #player.split .pside{flex:1;max-width:460px;overflow:auto}
-  #player.split .pfig{height:22vh}
-  #player.split .ptime{font-size:15vh}
-}
 </style>
 
 <div class="ov" id="x-tv">
-  <div class="ovh"><b>Sur la TV et avec la montre</b><button class="b" data-x="tvclose">Fermer</button></div>
+  <div class="ovh"><b>Sur la TV, avec YouTube</b><button class="b" data-x="tvclose">Fermer</button></div>
   <div class="wrap">
     <p class="lead">La tablette fait tourner la séance (et capte ta FC), la TV affiche une copie de l’écran. Garde la page sur la tablette, pas dans le navigateur de la TV : il ne gère ni le Bluetooth ni le micro.</p>
-    <h2>YouTube avec ton compte : l’écran partagé</h2>
-    <p class="lead">Certaines vidéos interdisent d’être lues dans une autre page. Dans ce cas, utilise l’appli YouTube (avec ton compte, tes playlists, sans pub si tu es Premium) à côté de la séance :</p>
+    <h2>1. YouTube à côté : l’écran partagé</h2>
     <ol class="steps">
-      <li>Ouvre ta séance dans <b>Chrome</b>, et lance ta vidéo dans l’appli <b>YouTube</b>.</li>
+      <li>Ouvre ta séance dans <b>Chrome</b>, et lance ta vidéo ou ta playlist dans l’appli <b>YouTube</b> (avec ton compte).</li>
       <li>Ouvre les <b>applis récentes</b> (bouton carré ou ▥, ou glisse du bas vers le haut et maintiens).</li>
       <li>Touche l’<b>icône de Chrome</b> en haut de sa fenêtre › <b>Écran partagé</b> (Samsung : <b>Ouvrir en vue fractionnée</b>).</li>
-      <li>Choisis <b>YouTube</b> pour l’autre moitié. Glisse la barre du milieu pour régler les tailles.</li>
-      <li>Envoie ensuite tout l’écran sur la TV (ci-dessous) : la TV montre les deux.</li>
+      <li>Choisis <b>YouTube</b> pour l’autre moitié. Glisse la barre du milieu pour donner plus de place à la séance.</li>
     </ol>
-    <div class="info">Dans ce mode, décoche « Afficher la vidéo » dans la page. La pause de la séance ne met pas YouTube en pause.</div>
-    <h2>Envoyer l’écran sur la TV</h2>
+    <div class="info">La pause de la séance ne met pas YouTube en pause : mets la vidéo en pause toi-même, ou choisis une playlist de musique.</div>
+    <h2>2. Envoyer l’écran sur la TV</h2>
     <ol class="steps">
-      <li><b>Chromecast, Google TV, Android TV</b> : dans Chrome sur la tablette, menu ⋮ › <b>Caster…</b> › choisis la TV. Ou tire le volet des réglages rapides › <b>Caster l’écran</b> (ou <b>Smart View</b> sur Samsung).</li>
-      <li><b>TV Samsung, LG… sans Chromecast</b> : Smart View, « Screen Share » ou « Miracast » selon la marque, depuis les réglages rapides.</li>
-      <li><b>Avec un câble</b> : adaptateur USB-C vers HDMI, si ta tablette le permet.</li>
-    </ol>
-    <h2>Pour que ce soit beau</h2>
-    <ol class="steps">
-      <li>Tourne la tablette <b>à l’horizontale</b> et touche <b>⛶ Plein écran</b> : figure à gauche, chrono à droite.</li>
-      <li>Avec une vidéo YouTube : la vidéo prend la grande partie gauche, la séance la colonne de droite.</li>
-      <li>Le son (vidéo, bips, annonces) sort en général par la TV.</li>
+      <li>Tablette et TV (ou Chromecast) sur le <b>même Wi-Fi</b>.</li>
+      <li>Tire le volet du haut deux fois › <b>Caster l’écran</b> (Samsung : <b>Smart View</b>) › choisis la TV.</li>
+      <li>TV sans Chromecast ni Smart View : « Screen Share » / « Miracast » selon la marque, ou un adaptateur <b>USB-C vers HDMI</b>.</li>
+      <li>Tourne la tablette <b>à l’horizontale</b> : la figure prend la gauche de l’écran, le chrono, les décomptes et le prochain exercice la droite.</li>
     </ol>
     <div class="warn">Commande vocale : le son de la TV peut gêner le micro de la tablette. Baisse un peu le volume ou rapproche-toi de la tablette. Sur Android, un petit bip peut sonner quand l’écoute redémarre.</div>
-    <h2>Boutons de la Garmin</h2>
-    <ol class="steps">
-      <li>La tablette doit être connectée à la montre via <b>Garmin Connect</b>.</li>
-      <li>Coche <b>⌚ Boutons musique de la montre</b> avant de démarrer.</li>
-      <li>Sur la montre, ouvre les <b>commandes de musique</b> (souvent appui long sur DOWN depuis le cadran, ou menu des commandes) et choisis la source <b>Téléphone</b> si elle te le demande.</li>
-      <li>▶︎❚❚ = pause / reprise · ⏭ = exercice suivant · ⏮ = précédent. Le titre du « morceau » sur la montre = l’exercice en cours.</li>
-    </ol>
-    <div class="warn">Si une vidéo YouTube joue en même temps, les boutons de la montre peuvent piloter YouTube au lieu de la séance. Dans ce cas, utilise la voix ou une télécommande.</div>
-    <h2>Télécommande ou clavier Bluetooth</h2>
+    <h2>3. Télécommande ou clavier Bluetooth</h2>
     <p class="lead"><b>Espace</b> = pause / reprise · <b>→</b> ou Page suivante = suivant · <b>←</b> ou Page précédente = précédent. Une télécommande de présentation marche bien. Les petites télécommandes « selfie » (volume +) ne marchent pas toujours dans Chrome.</p>
   </div>
 </div>
@@ -1922,15 +2003,14 @@ requestAnimationFrame(loop);
 const $=id=>document.getElementById(id);
 if(!$('player')||!$('p-run')||!$('p-go'))return;
 
-/* ---------- réglages v4 ---------- */
+/* ---------- réglages ---------- */
 const KEY='mes-seances-v4';
-let C={say:true,mic:false,media:true,yt:'',ytOn:false,ytSync:true};
-try{Object.assign(C,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+let C={say:true,mic:false};
+try{const o=JSON.parse(localStorage.getItem(KEY)||'{}');['say','mic'].forEach(k=>{if(typeof o[k]==='boolean')C[k]=o[k]})}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(C))}catch(e){}};
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let tt=null;const toast=m=>{const t=$('toast');if(!t)return;t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2800)};
 
-/* ---------- état du lecteur v3 (lu dans la page) ---------- */
+/* ---------- état du lecteur ---------- */
 const runVis=()=>$('player').classList.contains('on')&&!$('p-run').classList.contains('hid');
 const isRunning=()=>/M6 5h4/.test($('p-icon').innerHTML);
 const secOf=t=>{const m=/(\d+):(\d+)/.exec(t||'');return m?(+m[1])*60+(+m[2]):0};
@@ -1946,28 +2026,18 @@ const CTRL={
   restart:()=>{if(elapsed()>3)press('p-prev')}
 };
 
-/* ---------- mise en page : vidéo + séance ---------- */
-const run=$('p-run'),side=document.createElement('div');side.className='pside';
-while(run.firstChild)side.appendChild(run.firstChild);
-const ytw=document.createElement('div');ytw.className='ytw';run.appendChild(ytw);run.appendChild(side);
-const bot=side.querySelector('.ptop:last-child');
-if(bot)bot.insertAdjacentHTML('beforeend','<button class="chip" data-x="say" id="x-say2"></button><button class="chip" data-x="mic" id="x-mic2"></button><button class="chip" data-x="fs">⛶ Plein écran</button>');
+const bot=$('p-run').querySelector('.pbot');
+if(bot)bot.insertAdjacentHTML('beforeend','<button class="chip" data-x="say" id="x-say2"></button><button class="chip" data-x="mic" id="x-mic2"></button>');
 
 $('p-go').insertAdjacentHTML('beforebegin',`<div class="card" id="x-card" style="margin-top:10px">
-  <div class="t"><b>Commandes, vidéo et TV</b></div>
+  <div class="t"><b>Commandes et TV</b></div>
   <div class="chips">
     <button class="chip" data-x="say">🔊 Annonces vocales</button>
     <button class="chip" data-x="mic">🎤 Commande vocale</button>
-    <button class="chip" data-x="media">⌚ Boutons musique de la montre</button>
   </div>
   <p class="note" style="margin-top:0">Commande vocale : dis « pause », « reprends », « suivant », « précédent », « recommence » ou « temps ».</p>
-  <div class="lbl">Vidéo YouTube à côté de la séance</div>
-  <input id="x-yt" class="xin" inputmode="url" autocomplete="off" placeholder="Colle un lien YouTube (vidéo ou playlist)">
-  <p class="note" id="x-ytmsg"></p>
-  <div class="chips"><button class="chip" data-x="ytOn">Afficher la vidéo</button><button class="chip" data-x="ytSync">La vidéo suit les pauses</button></div>
-  <div class="acts"><button class="b sm" data-x="tvhelp">📺 TV et montre : comment ?</button><button class="b sm" data-x="fs">⛶ Plein écran</button></div>
+  <div class="acts"><button class="b sm" data-x="tvhelp">📺 YouTube à côté et TV : comment ?</button></div>
 </div>`);
-const ytIn=$('x-yt');ytIn.value=C.yt||'';
 
 /* ---------- voix (annonces) ---------- */
 const TTS='speechSynthesis' in window;
@@ -1977,71 +2047,29 @@ if(TTS){pickVoice();try{speechSynthesis.addEventListener('voiceschanged',pickVoi
 function say(t){
   if(!C.say||!TTS||!t)return;
   try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';if(frVoice)u.voice=frVoice;u.rate=1.05;
-    quietUntil=Date.now()+9000;duck(true);
-    u.onend=u.onerror=()=>{quietUntil=Date.now()+700;duck(false)};speechSynthesis.speak(u)}catch(e){}
+    quietUntil=Date.now()+9000;u.onend=u.onerror=()=>{quietUntil=Date.now()+700};speechSynthesis.speak(u)}catch(e){}
 }
 const dur=s=>s>=60?Math.floor(s/60)+' minute'+(s>=120?'s':'')+(s%60?' '+(s%60):''):s+' secondes';
 const spoken=n=>String(n).replace(/\s+–\s+droite$/,', côté droit').replace(/\s+–\s+gauche$/,', côté gauche');
 const nextName=()=>{const b=$('p-next').querySelector('b');return b?(b.textContent||'').trim():''};
 
-/* Annonce du prochain exercice : pendant les pauses, et 8 s avant la fin de chaque exercice */
-let saidNext={n:'',t:0},stepName='';
+/* Annonces : texte préparé par le lecteur, et « Ensuite : … » 8 s avant la fin */
+let saidNext={n:'',t:0};
 const recentlySaid=nx=>saidNext.n===nx&&Date.now()-saidNext.t<25000;
 function onStep(){
   if(!runVis())return;
   stepInit=secOf($('p-time').textContent);
-  const n=($('p-name').textContent||'').trim(),nx=nextName();stepName=n;
+  const n=($('p-name').textContent||'').trim(),nx=nextName();
   let t=$('p-name').dataset.say||'';
   const m=/Prochain : (.+)$/.exec(t);
   if(m){if(/^Prochain/.test(t)&&recentlySaid(m[1]))t='';saidNext={n:m[1],t:Date.now()}}
-  say(t);meta(n,nx);
+  say(t);
 }
 setInterval(()=>{
   if(!runVis()||!isRunning()||!C.say||/^(Prochain|En place)/.test($('p-name').dataset.say||'')||stepInit<15)return;
   const r=secOf($('p-time').textContent),nx=nextName();
   if(r<=8&&r>=6&&nx&&!recentlySaid(spoken(nx))){saidNext={n:spoken(nx),t:Date.now()};say('Ensuite : '+spoken(nx))}
 },250);
-
-/* ---------- boutons musique de la montre (Media Session) ---------- */
-const MS='mediaSession' in navigator;
-let au=null;
-function silentWav(){const sr=8000,n=sr*10,b=new ArrayBuffer(44+n),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
-  w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
-  v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
-  for(let i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
-function handlers(on){if(!MS)return;const h=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,on?()=>{if(runVis())f()}:null)}catch(e){}};
-  h('play',CTRL.play);h('pause',CTRL.pause);h('nexttrack',CTRL.next);h('previoustrack',CTRL.prev);h('stop',CTRL.pause)}
-function mediaStart(){if(!C.media||!MS)return;if(!au){au=new Audio(silentWav());au.loop=true}au.play().catch(()=>{});handlers(true)}
-function mediaStop(){if(au)au.pause();handlers(false);try{navigator.mediaSession.playbackState='none';navigator.mediaSession.metadata=null}catch(e){}}
-function meta(n,nx){if(!au||!C.media||!MS||!('MediaMetadata' in window))return;
-  try{navigator.mediaSession.metadata=new MediaMetadata({title:n||'Séance',artist:nx?'Prochain : '+nx:'Dernier exercice',album:($('p-title').textContent||'Mes séances')})}catch(e){}}
-
-/* ---------- YouTube ---------- */
-let yf=null;
-function ytSrc(u){u=String(u||'').trim();if(!u)return null;
-  const id=(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([\w-]{11})/.exec(u)||[])[1]||(/^[\w-]{11}$/.test(u)?u:null);
-  const list=(/[?&]list=([\w-]+)/.exec(u)||[])[1];
-  const q='enablejsapi=1&playsinline=1&rel=0&autoplay=1'+(/^https?:/.test(location.origin)?'&origin='+encodeURIComponent(location.origin):'');
-  if(id)return 'https://www.youtube-nocookie.com/embed/'+id+'?'+q+(list?'&list='+list:'');
-  if(list)return 'https://www.youtube-nocookie.com/embed/videoseries?list='+list+'&'+q;
-  return null}
-function ytCmd(func,args){if(!yf||!yf.contentWindow)return;try{yf.contentWindow.postMessage(JSON.stringify({event:'command',func,args:args||[]}),'*')}catch(e){}}
-function duck(on){if(yf)ytCmd('setVolume',[on?25:100])}
-function ytStart(){ytStop();if(!C.ytOn)return;const src=ytSrc(C.yt);if(!src){toast('Lien YouTube non reconnu');return}
-  yf=document.createElement('iframe');yf.src=src;yf.title='Vidéo YouTube';yf.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';yf.setAttribute('allowfullscreen','');
-  yf.referrerPolicy='strict-origin-when-cross-origin';
-  yf.addEventListener('load',()=>setTimeout(()=>{if(!yf)return;try{yf.contentWindow.postMessage(JSON.stringify({event:'listening',id:'yt1',channel:'widget'}),'*')}catch(e){}ytCmd(isRunning()||!C.ytSync?'playVideo':'pauseVideo')},900));
-  ytw.appendChild(yf);$('player').classList.add('split')}
-window.addEventListener('message',e=>{if(!yf||e.source!==yf.contentWindow)return;let d;try{d=typeof e.data==='string'?JSON.parse(e.data):e.data}catch(x){return}
-  if(d&&d.event==='onError')ytBlocked(d.info)});
-function ytBlocked(code){if(ytw.querySelector('.ytx'))return;
-  const link=/^https:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(C.yt)?C.yt:'';
-  const blocked=[101,150,153].includes(+code);
-  ytw.insertAdjacentHTML('beforeend',`<div class="ytx"><b>${blocked?'Cette vidéo refuse d’être lue dans une autre page':'YouTube n’arrive pas à lire cette vidéo'}</b>
-  <span>${blocked?'C’est un choix de son auteur : ton compte YouTube n’y change rien. Choisis une autre vidéo, ou mets l’appli YouTube en écran partagé à côté de Chrome.':'Essaie une autre vidéo ou une playlist.'}</span>
-  <span class="acts">${link?`<a class="b sm" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir dans YouTube</a>`:''}<button class="b sm" data-x="tvhelp">Écran partagé : comment ?</button><button class="b sm" data-x="ytOn">Masquer la vidéo</button></span></div>`);
-  toast('Vidéo YouTube bloquée par son auteur')}
-function ytStop(){if(yf){yf.remove();yf=null}ytw.querySelectorAll('.ytx').forEach(x=>x.remove());if($('player').classList.contains('split'))$('player').classList.remove('split')}
 
 /* ---------- commande vocale ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -2086,37 +2114,24 @@ function micStart(){
 }
 function micStop(){recWant=false;gen++;const r=rec;rec=null;recOn=false;try{r&&r.abort()}catch(e){}paint()}
 
-/* ---------- plein écran ---------- */
-function fullscreen(){const d=document,el=d.documentElement;
-  if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen||function(){}).call(d);return}
-  const p=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);
-  const lock=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};
-  if(p&&p.then)p.then(lock,()=>{});else lock()}
-
 /* ---------- boutons ---------- */
 function paint(){
-  document.querySelectorAll('[data-x]').forEach(b=>{const k=b.dataset.x;if(k in C&&typeof C[k]==='boolean')b.setAttribute('aria-pressed',C[k])});
+  document.querySelectorAll('[data-x]').forEach(b=>{const k=b.dataset.x;if(k in C)b.setAttribute('aria-pressed',C[k])});
   const s2=$('x-say2');if(s2)s2.textContent='🔊 Annonces : '+(C.say?'oui':'non');
   const m2=$('x-mic2');if(m2){m2.textContent=C.mic?(recOn?'🎤 J’écoute':'🎤 Micro : oui'):'🎤 Micro : non';m2.dataset.live=recOn?1:0}
-  const msg=$('x-ytmsg');if(msg){const v=ytIn.value.trim();msg.innerHTML=!v?'Exemple : https://youtu.be/… ou un lien de playlist. La vidéo s’affiche à côté de la séance.':ytSrc(v)?'<span class="xok">✓ Lien reconnu</span>':'<span class="xko">✗ Lien non reconnu : copie le lien depuis « Partager » dans YouTube</span>'}
 }
-ytIn.addEventListener('input',()=>{C.yt=ytIn.value.trim();if(ytSrc(C.yt))C.ytOn=true;save();paint()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(!b)return;const k=b.dataset.x;
   if(k==='tvhelp'){$('x-tv').classList.add('on');$('x-tv').scrollTop=0;return}
   if(k==='tvclose'){$('x-tv').classList.remove('on');return}
-  if(k==='fs'){fullscreen();return}
   if(k==='say'){C.say=!C.say;if(!C.say&&TTS)try{speechSynthesis.cancel()}catch(x){}else say('Annonces activées')}
   else if(k==='mic'){C.mic=!C.mic;if(C.mic)micStart();else micStop()}
-  else if(k==='media'){C.media=!C.media;if(!C.media)mediaStop();else if(runVis())mediaStart()}
-  else if(k==='ytOn'){if(!C.ytOn&&!ytSrc(C.yt)){toast('Colle d’abord un lien YouTube');ytIn.focus();return}C.ytOn=!C.ytOn;if(runVis())C.ytOn?ytStart():ytStop()}
-  else if(k==='ytSync')C.ytSync=!C.ytSync;
   else return;
   save();paint()});
 
-/* Démarrer : le clic sur « Démarrer » autorise le son, la vidéo et le micro */
+/* Démarrer : le clic autorise le son et le micro */
 $('p-go').addEventListener('click',()=>{
   if(TTS&&C.say)try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(''))}catch(e){}
-  mediaStart();ytStart();if(C.mic)micStart();
+  if(C.mic)micStart();
 },true);
 
 /* Télécommande / clavier */
@@ -2128,23 +2143,18 @@ document.addEventListener('keydown',e=>{
   else if(['ArrowLeft','PageUp','MediaTrackPrevious','AudioVolumeDown'].includes(k)){e.preventDefault();CTRL.prev()}
 },true);
 
-/* ---------- on écoute le lecteur v3 ---------- */
+/* ---------- on écoute le lecteur ---------- */
 new MutationObserver(onStep).observe($('p-name'),{childList:true,characterData:true,subtree:true});
-new MutationObserver(()=>{const r=isRunning();
-  if(au&&C.media){if(r)au.play().catch(()=>{});else au.pause();try{navigator.mediaSession.playbackState=r?'playing':'paused'}catch(e){}}
-  if(yf&&C.ytSync)ytCmd(r?'playVideo':'pauseVideo');
-}).observe($('p-icon'),{childList:true,subtree:true});
-new MutationObserver(()=>{if(!$('p-end').classList.contains('hid')){say('Bravo, séance terminée');micStop();mediaStop();ytStop()}})
+new MutationObserver(()=>{if(!$('p-end').classList.contains('hid')){say('Bravo, séance terminée');micStop()}})
   .observe($('p-end'),{attributes:true,attributeFilter:['class']});
 let wasOn=false;
 new MutationObserver(()=>{const on=$('player').classList.contains('on');if(on===wasOn)return;wasOn=on;
-  if(!on){micStop();mediaStop();ytStop();if(TTS)try{speechSynthesis.cancel()}catch(e){}}
+  if(!on){micStop();if(TTS)try{speechSynthesis.cancel()}catch(e){}}
 }).observe($('player'),{attributes:true,attributeFilter:['class']});
 
 paint();
 })();
 </script>
-<!-- =================== fin du bloc v4 =================== -->
 
 </body>
 </html>
